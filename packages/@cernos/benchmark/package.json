@@ -1,0 +1,53 @@
+{
+	"name": "@cernos/cernos-benchmark",
+	"version": "2.4.0",
+	"description": "cli for running benchmark tests for cernos",
+	"main": "dist/index",
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+		"format": "biome format --write .",
+		"format:check": "biome ci .",
+		"lint": "eslint . --quiet",
+		"lint:fix": "eslint . --fix",
+		"start": "./bin/cernos-benchmark",
+		"test": "echo \"WARNING: no test specified\" && exit 0",
+		"typecheck": "tsc --noEmit",
+		"benchmark": "zx scripts/run.mjs",
+		"benchmark-in-cloud": "pnpm benchmark --env cloud",
+		"benchmark-locally": "pnpm benchmark --env local",
+		"provision-cloud-env": "zx scripts/provision-cloud-env.mjs",
+		"destroy-cloud-env": "zx scripts/destroy-cloud-env.mjs",
+		"watch": "tsc-watch -p tsconfig.build.json --onCompilationComplete \"tsc-alias -p tsconfig.build.json\""
+	},
+	"engines": {
+		"node": ">=22.16"
+	},
+	"keywords": [
+		"automate",
+		"automation",
+		"iaas",
+		"ipaas",
+		"workflow",
+		"benchmark",
+		"performance"
+	],
+	"bin": {
+		"cernos-benchmark": "./bin/cernos-benchmark"
+	},
+	"dependencies": {
+		"@oclif/core": "^4.8.3",
+		"axios": "^1.13.6",
+		"dotenv": "^17.3.1",
+		"nanoid": "^5.1.6",
+		"zx": "^8.8.5"
+	},
+	"devDependencies": {
+		"@types/convict": "^6.1.6",
+		"@types/k6": "^1.6.0"
+	},
+	"oclif": {
+		"bin": "cernos-benchmark",
+		"commands": "./dist/commands",
+		"topicSeparator": " "
+	}
+}
