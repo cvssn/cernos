@@ -1,0 +1,71 @@
+{
+  "name": "cernos",
+  "version": "2.11.0",
+  "description": "cernos workflow automation tool",
+  "main": "dist/index",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rimraf dist .turbo",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json && pnpm run build:data",
+    "build:data": "node scripts/build.mjs",
+    "buildAndDev": "pnpm run build && pnpm run dev",
+    "dev": "concurrently -k -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold\" \"npm run watch\" \"nodemon --delay 1\"",
+    "dev:worker": "concurrently -k -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold\" \"npm run watch\" \"nodemon worker\"",
+    "dev:webhook": "concurrently -k -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold\" \"npm run watch\" \"nodemon webhook\"",
+    "format": "biome format --write .",
+    "format:check": "biome ci .",
+    "lint": "eslint . --quiet",
+    "lint:fix": "eslint . --fix",
+    "start": "node ../../scripts/os-normalize.mjs --dir bin cernos",
+    "test": "cernos_LOG_LEVEL=silent DB_SQLITE_POOL_SIZE=4 DB_TYPE=sqlite jest",
+    "test:unit": "cernos_LOG_LEVEL=silent DB_SQLITE_POOL_SIZE=4 DB_TYPE=sqlite jest --config=jest.config.unit.js",
+    "test:integration": "cernos_LOG_LEVEL=silent DB_SQLITE_POOL_SIZE=4 DB_TYPE=sqlite jest --config=jest.config.integration.js",
+    "test:dev": "cernos_LOG_LEVEL=silent DB_SQLITE_POOL_SIZE=4 DB_TYPE=sqlite jest --watch",
+    "test:sqlite": "cernos_LOG_LEVEL=silent DB_SQLITE_POOL_SIZE=4 DB_TYPE=sqlite jest --config=jest.config.integration.js --no-coverage",
+    "test:sqlite:migrations": "cernos_LOG_LEVEL=silent DB_SQLITE_POOL_SIZE=4 DB_TYPE=sqlite jest --config=jest.config.migration.js --no-coverage",
+    "test:sqlite:migrations:tc": "cernos_LOG_LEVEL=silent DB_SQLITE_POOL_SIZE=4 DB_TYPE=sqlite jest --config=jest.config.migration.testcontainers.js --no-coverage",
+    "test:postgres": "cernos_LOG_LEVEL=silent DB_TYPE=postgresdb DB_POSTGRESDB_SCHEMA=alt_schema DB_TABLE_PREFIX=test_ jest --config=jest.config.integration.js --no-coverage",
+    "test:postgres:migrations": "cernos_LOG_LEVEL=silent DB_TYPE=postgresdb DB_POSTGRESDB_SCHEMA=alt_schema DB_TABLE_PREFIX=test_ jest --config=jest.config.migration.js --no-coverage",
+    "test:postgres:migrations:tc": "cernos_LOG_LEVEL=silent DB_TYPE=postgresdb DB_POSTGRESDB_SCHEMA=alt_schema DB_TABLE_PREFIX=test_ jest --config=jest.config.migration.testcontainers.js --no-coverage",
+    "test:postgres:tc": "cernos_LOG_LEVEL=silent jest --config=jest.config.integration.testcontainers.js --no-coverage",
+    "test:postgres:integration:tc": "cernos_LOG_LEVEL=silent jest --config=jest.config.integration.testcontainers.js --no-coverage --testPathIgnorePatterns=/test/migration/",
+    "test:mariadb": "echo true",
+    "test:win": "set cernos_LOG_LEVEL=silent&& set DB_SQLITE_POOL_SIZE=4&& set DB_TYPE=sqlite&& jest",
+    "test:dev:win": "set cernos_LOG_LEVEL=silent&& set DB_SQLITE_POOL_SIZE=4&& set DB_TYPE=sqlite&& jest --watch",
+    "test:sqlite:win": "set cernos_LOG_LEVEL=silent&& set DB_SQLITE_POOL_SIZE=4&& set DB_TYPE=sqlite&& jest --config=jest.config.integration.js",
+    "test:postgres:win": "set cernos_LOG_LEVEL=silent&& set DB_TYPE=postgresdb&& set DB_POSTGRESDB_SCHEMA=alt_schema&& set DB_TABLE_PREFIX=test_&& jest --config=jest.config.integration.js --no-coverage",
+    "test:mariadb:win": "echo true",
+    "watch": "tsc-watch -p tsconfig.build.json --onCompilationComplete \"tsc-alias -p tsconfig.build.json\""
+  },
+  "bin": {
+    "cernos": "./bin/cernos"
+  },
+  "keywords": [
+    "automate",
+    "automation",
+    "iaas",
+    "ipaas",
+    "workflow"
+  ],
+  "engines": {
+    "node": ">=22.16"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "dist"
+  ],
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.10.0",
+    "isbot": "^5.1.35",
+    "semver": "^7.7.4",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "mjml": "^4.18.0"
+  }
+}
