@@ -7,7 +7,7 @@
 		"rootDir": "src",
 		"outDir": "dist",
 
-		"types": ["vitest/globals"],
+		"types": ["vitest/globals", "node"],
 
 		"esModuleInterop": true,
 
