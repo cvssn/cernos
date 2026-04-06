@@ -1,0 +1,80 @@
+{
+	"name": "@cernos/cli",
+	"version": "0.3.0",
+	"description": "[beta] cliente cli para o cernos",
+	"license": "ver licença em license.md",
+	"bin": {
+		"cernos-cli": "bin/cernos-cli.mjs"
+	},
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"bin",
+		"dist",
+		"skills"
+	],
+	"scripts": {
+		"clean": "rimraf dist .turbo",
+		"dev": "pnpm watch",
+		"typecheck": "tsc --noEmit",
+		"build": "tsc -p tsconfig.build.json",
+		"format": "biome format --write .",
+		"format:check": "biome ci .",
+		"lint": "eslint src --quiet",
+		"lint:fix": "eslint src --fix",
+		"watch": "tsc -p tsconfig.build.json --watch",
+		"test": "vitest run",
+		"test:unit": "vitest run"
+	},
+	"oclif": {
+		"bin": "cernos-cli",
+		"commands": {
+			"strategy": "explicit",
+			"target": "./dist/index.js",
+			"identifier": "commands"
+		},
+		"topicSeparator": " ",
+		"topics": {
+			"workflow": {
+				"description": "crie, atualize, e gerencie workflows"
+			},
+			"execution": {
+				"description": "monitore e controle execuções de workflow"
+			},
+			"credential": {
+				"description": "crie, atualize, e gerencie credenciais"
+			},
+			"project": {
+				"description": "crie e gerencie projetos e membros de time"
+			},
+			"tag": {
+				"description": "crie, atualize, e gerencie tags"
+			},
+			"variable": {
+				"description": "crie, atualize, e gerencie variáveis"
+			},
+			"data-table": {
+				"description": "crie e gerencie tabelas de dados e rows"
+			},
+			"user": {
+				"description": "liste e visualize instância de usuários"
+			},
+			"config": {
+				"description": "veja e atualize a configuração de cli"
+			},
+			"source-control": {
+				"description": "pull mudanças do provider de controle da fonte configurada"
+			},
+			"skill": {
+				"description": "instale as skills do cli do cernos para os agentes de código ai"
+			}
+		}
+	},
+	"dependencies": {
+		"@oclif/core": "^4.10.5"
+	},
+	"devDependencies": {
+		"@types/node": "^25.5.2",
+		"vitest": "^4.1.2"
+	}
+}
