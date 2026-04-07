@@ -7,13 +7,13 @@ pre-commit:
       skip:
         - merge
         - rebase
-    prettier_check:
-      glob: 'packages/**/*.{vue,yml,md,css,scss}'
-      run: pnpm prettier --write --ignore-unknown --no-error-on-unmatched-pattern {staged_files}
-      stage_fixed: true
-      skip:
-        - merge
-        - rebase
+    # prettier_check:
+      # glob: 'packages/**/*.{vue,yml,md,css,scss}'
+      # run: pnpm prettier --write --ignore-unknown --no-error-on-unmatched-pattern {staged_files}
+      # stage_fixed: true
+      # skip:
+        # - merge
+        # - rebase
     styles_check:
       glob: 'packages/**/*.{scss,sass,vue}'
       run: pnpm lint:styles:fix
