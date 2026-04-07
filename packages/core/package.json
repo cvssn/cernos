@@ -1,0 +1,72 @@
+{
+	"name": "cernos-core",
+	"version": "2.16.0",
+	"description": "funcionalidade core do cernos",
+	"main": "dist/index",
+	"types": "dist/index.d.ts",
+	"bin": {
+		"cernos-copy-static-files": "./bin/copy-static-files",
+		"cernos-generate-translations": "./bin/generate-translations",
+		"cernos-generate-metadata": "./bin/generate-metadata",
+		"cernos-generate-node-defs": "./bin/generate-node-defs"
+	},
+	"scripts": {
+		"clean": "rimraf dist .turbo",
+		"typecheck": "tsc --noEmit",
+		"build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+		"dev": "pnpm watch",
+		"format": "biome format --write .",
+		"format:check": "biome ci .",
+		"lint": "eslint . --quiet",
+		"lint:fix": "eslint . --fix",
+		"watch": "tsc-watch -p tsconfig.build.json --onCompilationComplete \"tsc-alias -p tsconfig.build.json\"",
+		"test": "jest",
+		"test:unit": "jest",
+		"test:dev": "jest --watch"
+	},
+	"files": [
+		"dist",
+		"bin"
+	],
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.1025.0",
+		"@sentry/node": "^10.47.0",
+		"axios": "^1.14.0",
+		"callsites": "^4.2.0",
+		"chardet": "^2.1.1",
+		"cron": "^4.4.0",
+		"fast-glob": "^3.3.3",
+		"file-type": "^22.0.0",
+		"form-data": "^4.0.5",
+		"htmlparser2": "^12.0.0",
+		"http-proxy-agent": "^9.0.0",
+		"https-proxy-agent": "^9.0.0",
+		"iconv-lite": "^0.7.2",
+		"jsonwebtoken": "^9.0.3",
+		"lodash": "^4.18.1",
+		"luxon": "^3.7.2",
+		"mime-types": "^3.0.2",
+		"nanoid": "^5.1.7",
+		"oauth-1.0a": "^2.2.6",
+		"p-cancelable": "^4.0.1",
+		"picocolors": "^1.1.1",
+		"pretty-bytes": "^7.1.0",
+		"proxy-from-env": "^2.1.0",
+		"qs": "^6.15.0",
+		"ssh2": "^1.17.0",
+		"uuid": "^13.0.0",
+		"winston": "^3.19.0",
+		"xml2js": "^0.6.2",
+		"zod": "^4.3.6"
+	},
+	"devDependencies": {
+		"@langchain/core": "^1.1.39",
+		"@types/express": "^5.0.6",
+		"@types/jsonwebtoken": "^9.0.10",
+		"@types/lodash": "^4.17.24",
+		"@types/mime-types": "^3.0.1",
+		"@types/proxy-from-env": "^1.0.4",
+		"@types/uuid": "^10.0.0",
+		"@types/xml2js": "^0.4.14"
+	}
+}
