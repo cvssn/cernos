@@ -96,7 +96,7 @@ o pacote `cernos-workflow` exporta utilitários de percurso em gráficos a parti
 **conceito-chave**: `workflow.connections` é indexado pelo **node de origem**. para encontrar os nodes parent, utilize `mapconnectionsbydestination()` para inverter a ordem primeiro
 
 ```typescript
-import { getParentNodes, getChildNodes, mapConnectionsByDestination } from 'n8n-workflow';
+import { getParentNodes, getChildNodes, mapConnectionsByDestination } from 'cernos-workflow';
 
 // encontrando parent nodes (antecessores) - requer conexões invertidas
 const connectionsByDestination = mapConnectionsByDestination(workflow.connections);

@@ -55,7 +55,7 @@ export function resolveConnection(flags: { url?: string; apiKey?: string }): {
 	const config = flags.url && flags.apiKey ? {} : readConfig();
 
 	return {
-		url: flags.url ?? process.env.N8N_URL ?? config.url,
-		apiKey: flags.apiKey ?? process.env.N8N_API_KEY ?? config.apiKey,
+		url: flags.url ?? process.env.CERNOS_URL ?? config.url,
+		apiKey: flags.apiKey ?? process.env.CERNOS_API_KEY ?? config.apiKey,
 	};
 }
