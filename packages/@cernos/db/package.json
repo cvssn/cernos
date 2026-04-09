@@ -1,0 +1,15 @@
+{
+  "name": "@cernos/db",
+  "version": "1.16.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "class-validator": "^0.15.1"
+  }
+}
