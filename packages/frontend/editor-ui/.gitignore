@@ -1,0 +1,32 @@
+.DS_Store
+
+node_modules
+
+/dist
+
+/tests/e2e/videos/
+/tests/e2e/screenshots/
+
+# arquivos env locais
+.env.local
+.env.*.local
+
+# arquivos log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# diretórios e arquivos de editor
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+# arquivos auto-gerados
+src/components.d.ts
+
+# artefatos de construção
+.build/
