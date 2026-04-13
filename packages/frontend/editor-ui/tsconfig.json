@@ -1,0 +1,54 @@
+{
+    "extends": "@cernos/typescript-config/tsconfig.frontend.json",
+
+    "compilerOptions": {
+        "baseUrl": ".",
+
+        "moduleResolution": "bundler",
+
+        "rootDirs": [
+            ".",
+
+            "../@cernos/rest-api-client/src",
+            "../@cernos/composables/src",
+            "../@cernos/chat/src",
+            "../@cernos/design-system/src"
+        ],
+
+        "noEmit": true,
+
+        "types": [
+            "vitest/globals",
+            "unplugin-icons/types/vue",
+            "../@cernos/design-system/src/shims-modules.d.ts"
+        ],
+
+        "paths": {
+            "@/*": ["./src/*"],
+            "@cernos/composables*": ["../@cernos/composables/src*"],
+			"@cernos/constants*": ["../../@cernos/constants/src*"],
+			"@cernos/chat*": ["../@cernos/chat/src*"],
+			"@cernos/chat-hub*": ["../../@cernos/chat-hub/src*"],
+			"@cernos/design-system*": ["../@cernos/design-system/src*"],
+			"@cernos/i18n*": ["../@cernos/i18n/src*"],
+			"@cernos/stores*": ["../@cernos/stores/src*"],
+			"@cernos/api-types*": ["../../@cernos/api-types/src*"],
+			"@cernos/utils*": ["../../@cernos/utils/src*"],
+			"@cernos/expression-runtime": ["./vite/expression-runtime-stub.ts"]
+        },
+
+        // todo: remover esta opção
+        "useUnknownInCatchVariables": false
+    },
+
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.vue"
+    ],
+
+    "exclude": [
+        "src/**/*.stories.ts",
+        "src/plugins/codemirror/typescript/worker/**/*.d.ts"
+    ]
+}
