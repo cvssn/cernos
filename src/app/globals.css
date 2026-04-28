@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-gradient: radial-gradient(circle at 20% 0%, #fde68a 0%, transparent 45%),
+    radial-gradient(circle at 80% 10%, #fbbf24 0%, transparent 40%),
+    linear-gradient(180deg, #60a5fa 0%, #3b82f6 55%, #1d4ed8 100%);
+  --accent: #fbbf24;
+  --glass: rgba(255, 255, 255, 0.14);
+  --text: #f8fafc;
+  --subtext: rgba(248, 250, 252, 0.72);
+  --border: rgba(255, 255, 255, 0.22);
+  --ring: rgba(253, 230, 138, 0.55);
+  --particle: #fde68a;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background: #0b1220;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.theme-bg {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-gradient);
+  transition: background 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: -2;
+}
+
+.theme-noise {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.35;
+}
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.glass-strong {
+  background: color-mix(in srgb, var(--glass) 75%, transparent);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.text-main {
+  color: var(--text);
+}
+
+.text-sub {
+  color: var(--subtext);
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.bg-accent {
+  background: var(--accent);
+}
+
+.ring-accent {
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes raindrop {
+  0% {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+}
+
+@keyframes snowflake {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(110vh) translateX(40px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flicker {
+  0%, 92%, 100% { opacity: 0; }
+  93%, 96% { opacity: 1; }
+}
+
+@keyframes pulseSun {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px var(--accent)); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 60px var(--accent)); }
+}
+
+.sun-pulse {
+  animation: pulseSun 6s ease-in-out infinite;
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.lightning-flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.6), transparent 60%);
+  opacity: 0;
+  animation: flicker 8s infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
