@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordHistory } from "@/lib/db";
-import type { WeatherPayload } from "@/lib/types";
+import type { Snapshot, WeatherPayload } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -42,10 +42,17 @@ export async function GET(req: NextRequest) {
     "hourly",
     [
       "temperature_2m",
-      "weather_code",
+      "apparent_temperature",
+      "relative_humidity_2m",
       "precipitation",
       "precipitation_probability",
+      "weather_code",
+      "wind_speed_10m",
+      "wind_direction_10m",
+      "surface_pressure",
+      "cloud_cover",
       "is_day",
+      "uv_index",
     ].join(",")
   );
   url.searchParams.set(
@@ -93,16 +100,23 @@ export async function GET(req: NextRequest) {
   }
 
   const hourlyTimes: string[] = data.hourly?.time ?? [];
-  const startIdx = nearestHourIndex(hourlyTimes);
-  const hourlyEntries = hourlyTimes.slice(startIdx, startIdx + 24).map((time, i) => ({
+  const currentTimeStr: string = data.current?.time ?? "";
+  const hourlyAll: Snapshot[] = hourlyTimes.map((time, i) => ({
     time,
-    temperature: data.hourly.temperature_2m[startIdx + i],
-    weatherCode: data.hourly.weather_code[startIdx + i],
-    precipitation: data.hourly.precipitation[startIdx + i] ?? 0,
-    precipitationProbability:
-      data.hourly.precipitation_probability?.[startIdx + i] ?? 0,
-    isDay: !!data.hourly.is_day[startIdx + i],
+    temperature: data.hourly.temperature_2m[i],
+    apparentTemperature: data.hourly.apparent_temperature[i],
+    humidity: data.hourly.relative_humidity_2m[i],
+    precipitation: data.hourly.precipitation[i] ?? 0,
+    precipitationProbability: data.hourly.precipitation_probability?.[i] ?? 0,
+    weatherCode: data.hourly.weather_code[i],
+    windSpeed: data.hourly.wind_speed_10m[i] ?? 0,
+    windDirection: data.hourly.wind_direction_10m[i] ?? 0,
+    pressure: data.hourly.surface_pressure[i] ?? 0,
+    cloudCover: data.hourly.cloud_cover[i] ?? 0,
+    isDay: !!data.hourly.is_day[i],
+    uvIndex: data.hourly.uv_index[i] ?? 0,
   }));
+  const nowIndex = nearestHourIndex(hourlyTimes, currentTimeStr);
 
   const dailyDates: string[] = data.daily?.time ?? [];
   const dailyEntries = dailyDates.map((date, i) => ({
@@ -118,6 +132,22 @@ export async function GET(req: NextRequest) {
     uvIndexMax: data.daily.uv_index_max?.[i] ?? 0,
   }));
 
+  const current: Snapshot = {
+    time: data.current.time,
+    temperature: data.current.temperature_2m,
+    apparentTemperature: data.current.apparent_temperature,
+    humidity: data.current.relative_humidity_2m,
+    precipitation: data.current.precipitation,
+    precipitationProbability: hourlyAll[nowIndex]?.precipitationProbability ?? 0,
+    weatherCode: data.current.weather_code,
+    windSpeed: data.current.wind_speed_10m,
+    windDirection: data.current.wind_direction_10m,
+    pressure: data.current.pressure_msl,
+    cloudCover: data.current.cloud_cover,
+    isDay: !!data.current.is_day,
+    uvIndex: data.current.uv_index,
+  };
+
   const payload: WeatherPayload = {
     place: {
       id: 0,
@@ -128,23 +158,11 @@ export async function GET(req: NextRequest) {
       longitude: Number(lon),
       timezone: data.timezone,
     },
-    current: {
-      temperature: data.current.temperature_2m,
-      apparentTemperature: data.current.apparent_temperature,
-      humidity: data.current.relative_humidity_2m,
-      precipitation: data.current.precipitation,
-      weatherCode: data.current.weather_code,
-      windSpeed: data.current.wind_speed_10m,
-      windDirection: data.current.wind_direction_10m,
-      pressure: data.current.pressure_msl,
-      cloudCover: data.current.cloud_cover,
-      isDay: !!data.current.is_day,
-      uvIndex: data.current.uv_index,
-      time: data.current.time,
-    },
-    hourly: hourlyEntries,
+    current,
+    hourly: hourlyAll,
     daily: dailyEntries,
     airQuality,
+    nowIndex,
   };
 
   try {
@@ -162,13 +180,17 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(payload);
 }
 
-function nearestHourIndex(times: string[]): number {
-  const now = Date.now();
+// Open-Meteo returns local-time strings (e.g. "2026-04-28T03:15") in the location's timezone.
+// We treat both `current.time` and each hourly time as opaque strings in the same zone.
+// Pinning both with "Z" forces consistent parsing — only the *difference* matters.
+function nearestHourIndex(times: string[], anchor: string): number {
+  if (!anchor) return 0;
+  const a = new Date(anchor + "Z").getTime();
   let best = 0;
   let bestDiff = Infinity;
   for (let i = 0; i < times.length; i++) {
-    const t = new Date(times[i]).getTime();
-    const diff = Math.abs(t - now);
+    const t = new Date(times[i] + "Z").getTime();
+    const diff = Math.abs(t - a);
     if (diff < bestDiff) {
       bestDiff = diff;
       best = i;

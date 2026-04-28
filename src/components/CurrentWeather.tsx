@@ -1,22 +1,43 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Heart, HeartOff } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, HeartOff, History } from "lucide-react";
 import { WeatherIcon } from "./WeatherIcon";
 import { describeWeather } from "@/lib/weather-codes";
-import type { WeatherPayload } from "@/lib/types";
+import type { Snapshot, WeatherPayload } from "@/lib/types";
 
 type Props = {
   weather: WeatherPayload;
+  snapshot: Snapshot;
   isFavorite: boolean;
   onToggleFavorite: () => void;
+  scrubbing: boolean;
 };
 
-export default function CurrentWeather({ weather, isFavorite, onToggleFavorite }: Props) {
-  const c = weather.current;
-  const cond = describeWeather(c.weatherCode);
+export default function CurrentWeather({
+  weather,
+  snapshot,
+  isFavorite,
+  onToggleFavorite,
+  scrubbing,
+}: Props) {
+  const cond = describeWeather(snapshot.weatherCode);
   const place = weather.place;
-  const localTime = new Date(c.time).toLocaleTimeString(undefined, {
+  const dKey = snapshot.time.slice(0, 10);
+  const day = weather.daily.find((d) => d.date === dKey) ?? weather.daily[0];
+
+  const date = new Date(snapshot.time);
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowKey = tomorrow.toISOString().slice(0, 10);
+  const dayLabel =
+    dKey === todayKey
+      ? "Today"
+      : dKey === tomorrowKey
+      ? "Tomorrow"
+      : date.toLocaleDateString(undefined, { weekday: "long" });
+  const timeLabel = date.toLocaleTimeString(undefined, {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -34,7 +55,15 @@ export default function CurrentWeather({ weather, isFavorite, onToggleFavorite }
             {[place.admin1, place.country].filter(Boolean).join(" · ")}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-main mt-1">{place.name}</h1>
-          <div className="text-sub text-sm mt-1">Local time {localTime}</div>
+          <div className="text-sub text-sm mt-1 flex items-center gap-2">
+            {scrubbing ? (
+              <span className="inline-flex items-center gap-1 accent">
+                <History size={12} /> {dayLabel} · {timeLabel}
+              </span>
+            ) : (
+              <span>Local time {timeLabel}</span>
+            )}
+          </div>
         </div>
         <button
           onClick={onToggleFavorite}
@@ -55,34 +84,48 @@ export default function CurrentWeather({ weather, isFavorite, onToggleFavorite }
 
       <div className="mt-6 md:mt-8 grid grid-cols-1 md:grid-cols-[1fr,auto] items-center gap-6">
         <div className="flex items-end gap-4">
-          <motion.div
-            key={c.weatherCode}
-            initial={{ scale: 0.6, opacity: 0, rotate: -10 }}
-            animate={{ scale: 1, opacity: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 120, damping: 14 }}
-            className="float accent"
-            style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.25))" }}
-          >
-            <WeatherIcon code={c.weatherCode} isDay={c.isDay} size={120} strokeWidth={1.2} />
-          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${snapshot.weatherCode}-${snapshot.isDay ? "d" : "n"}`}
+              initial={{ scale: 0.7, opacity: 0, rotate: -8 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 140, damping: 14 }}
+              className="float accent"
+              style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.25))" }}
+            >
+              <WeatherIcon
+                code={snapshot.weatherCode}
+                isDay={snapshot.isDay}
+                size={120}
+                strokeWidth={1.2}
+              />
+            </motion.div>
+          </AnimatePresence>
           <div className="leading-none">
             <div className="flex items-start gap-1">
-              <span className="text-7xl md:text-8xl font-extralight tracking-tight text-main">
-                {Math.round(c.temperature)}
-              </span>
+              <motion.span
+                key={Math.round(snapshot.temperature)}
+                initial={{ y: 8, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.25 }}
+                className="text-7xl md:text-8xl font-extralight tracking-tight text-main"
+              >
+                {Math.round(snapshot.temperature)}
+              </motion.span>
               <span className="text-3xl text-sub mt-3">°C</span>
             </div>
             <div className="text-main text-lg md:text-xl mt-2">{cond.label}</div>
             <div className="text-sub text-sm mt-1">
-              Feels like {Math.round(c.apparentTemperature)}°
+              Feels like {Math.round(snapshot.apparentTemperature)}°
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-3 md:gap-4 md:min-w-[280px]">
-          <Stat label="High" value={`${Math.round(weather.daily[0]?.temperatureMax ?? c.temperature)}°`} />
-          <Stat label="Low" value={`${Math.round(weather.daily[0]?.temperatureMin ?? c.temperature)}°`} />
-          <Stat label="Rain" value={`${weather.daily[0]?.precipitationProbabilityMax ?? 0}%`} />
+          <Stat label="High" value={`${Math.round(day?.temperatureMax ?? snapshot.temperature)}°`} />
+          <Stat label="Low" value={`${Math.round(day?.temperatureMin ?? snapshot.temperature)}°`} />
+          <Stat label="Rain" value={`${Math.round(snapshot.precipitationProbability)}%`} />
         </div>
       </div>
     </motion.div>

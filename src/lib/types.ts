@@ -10,11 +10,13 @@ export type Place = {
   timezone?: string;
 };
 
-export type CurrentWeather = {
+export type Snapshot = {
+  time: string;
   temperature: number;
   apparentTemperature: number;
   humidity: number;
   precipitation: number;
+  precipitationProbability: number;
   weatherCode: number;
   windSpeed: number;
   windDirection: number;
@@ -22,16 +24,6 @@ export type CurrentWeather = {
   cloudCover: number;
   isDay: boolean;
   uvIndex: number;
-  time: string;
-};
-
-export type HourlyEntry = {
-  time: string;
-  temperature: number;
-  weatherCode: number;
-  precipitation: number;
-  precipitationProbability: number;
-  isDay: boolean;
 };
 
 export type DailyEntry = {
@@ -47,20 +39,21 @@ export type DailyEntry = {
   uvIndexMax: number;
 };
 
-export type WeatherPayload = {
-  place: Place;
-  current: CurrentWeather;
-  hourly: HourlyEntry[];
-  daily: DailyEntry[];
-  airQuality?: AirQuality;
-};
-
 export type AirQuality = {
   pm10?: number;
   pm2_5?: number;
   ozone?: number;
   europeanAqi?: number;
   usAqi?: number;
+};
+
+export type WeatherPayload = {
+  place: Place;
+  current: Snapshot;
+  hourly: Snapshot[];
+  daily: DailyEntry[];
+  airQuality?: AirQuality;
+  nowIndex: number;
 };
 
 export type ThemeName =

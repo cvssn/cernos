@@ -2,10 +2,21 @@
 
 import { motion } from "framer-motion";
 import { WeatherIcon } from "./WeatherIcon";
-import type { HourlyEntry } from "@/lib/types";
+import type { Snapshot } from "@/lib/types";
 import { Droplets } from "lucide-react";
 
-export default function HourlyForecast({ hourly }: { hourly: HourlyEntry[] }) {
+type Props = {
+  hourly: Snapshot[];
+  nowIndex: number;
+  scrubIndex: number;
+  onPickHour: (i: number) => void;
+};
+
+export default function HourlyForecast({ hourly, nowIndex, scrubIndex, onPickHour }: Props) {
+  const start = nowIndex;
+  const end = Math.min(nowIndex + 24, hourly.length);
+  const window = hourly.slice(start, end);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -18,16 +29,23 @@ export default function HourlyForecast({ hourly }: { hourly: HourlyEntry[] }) {
         <span className="text-sub text-xs uppercase tracking-wider">Hourly</span>
       </div>
       <div className="flex gap-3 overflow-x-auto scrollbar-thin pb-1 -mx-1 px-1">
-        {hourly.map((h, i) => {
+        {window.map((h, i) => {
+          const absIndex = start + i;
           const date = new Date(h.time);
           const label =
             i === 0
               ? "Now"
               : date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+          const isSelected = absIndex === scrubIndex;
           return (
-            <div
+            <button
               key={h.time}
-              className="glass min-w-[90px] flex flex-col items-center px-3 py-3 text-center"
+              onClick={() => onPickHour(absIndex)}
+              className={`min-w-[90px] flex flex-col items-center px-3 py-3 text-center transition glass ${
+                isSelected ? "ring-accent scale-[1.04]" : "hover:scale-[1.03]"
+              }`}
+              style={isSelected ? { borderColor: "var(--accent)" } : undefined}
+              aria-pressed={isSelected}
             >
               <div className="text-sub text-xs">{label}</div>
               <div className="my-2 accent">
@@ -38,12 +56,12 @@ export default function HourlyForecast({ hourly }: { hourly: HourlyEntry[] }) {
               </div>
               {h.precipitationProbability > 10 ? (
                 <div className="mt-2 flex items-center gap-1 text-[11px] text-sub">
-                  <Droplets size={10} /> {h.precipitationProbability}%
+                  <Droplets size={10} /> {Math.round(h.precipitationProbability)}%
                 </div>
               ) : (
                 <div className="mt-2 h-3" />
               )}
-            </div>
+            </button>
           );
         })}
       </div>

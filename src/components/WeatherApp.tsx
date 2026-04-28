@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cloud, AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import SearchBar from "./SearchBar";
@@ -11,12 +11,15 @@ import WeatherDetails from "./WeatherDetails";
 import AIInsights from "./AIInsights";
 import Favorites from "./Favorites";
 import AnimatedBackground from "./AnimatedBackground";
+import TimeScrubber from "./TimeScrubber";
 import { paletteFor } from "@/lib/weather-themes";
 import { themeForCondition } from "@/lib/weather-codes";
+import { buildHeuristicInsights } from "@/lib/insights";
 import type {
   FavoriteRow,
   HistoryRow,
   Place,
+  Snapshot,
   ThemeName,
   WeatherPayload,
 } from "@/lib/types";
@@ -40,10 +43,20 @@ export default function WeatherApp() {
   const [geolocating, setGeolocating] = useState(false);
   const [favorites, setFavorites] = useState<FavoriteRow[]>([]);
   const [history, setHistory] = useState<HistoryRow[]>([]);
-  const [insights, setInsights] = useState<string[] | null>(null);
-  const [insightsSource, setInsightsSource] = useState<"claude" | "heuristic" | null>(null);
-  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [aiInsights, setAiInsights] = useState<string[] | null>(null);
+  const [aiSource, setAiSource] = useState<"claude" | "heuristic" | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [scrubIndex, setScrubIndex] = useState(0);
+  const [scrubbing, setScrubbing] = useState(false);
   const aiCtrl = useRef<AbortController | null>(null);
+
+  const snapshot: Snapshot | null = useMemo(() => {
+    if (!weather) return null;
+    if (scrubIndex === weather.nowIndex) return weather.current;
+    return weather.hourly[scrubIndex] ?? weather.current;
+  }, [weather, scrubIndex]);
+
+  const isAtNow = !weather || scrubIndex === weather.nowIndex;
 
   const applyTheme = useCallback((t: ThemeName) => {
     const p = paletteFor(t);
@@ -59,11 +72,23 @@ export default function WeatherApp() {
     setTheme(t);
   }, []);
 
+  // theme follows the scrubbed snapshot
+  useEffect(() => {
+    if (!snapshot) return;
+    applyTheme(themeForCondition(snapshot.weatherCode, snapshot.isDay));
+  }, [snapshot, applyTheme]);
+
+  // body class so CSS can shorten transitions during scrub
+  useEffect(() => {
+    document.body.classList.toggle("scrubbing", scrubbing);
+    return () => document.body.classList.remove("scrubbing");
+  }, [scrubbing]);
+
   const fetchWeather = useCallback(
     async (p: Place) => {
       setLoading(true);
       setError(null);
-      setInsights(null);
+      setAiInsights(null);
       try {
         const url = new URL("/api/weather", window.location.origin);
         url.searchParams.set("lat", String(p.latitude));
@@ -76,16 +101,16 @@ export default function WeatherApp() {
         if (!r.ok) throw new Error("Failed to load weather");
         const data: WeatherPayload = await r.json();
         setWeather(data);
-        applyTheme(themeForCondition(data.current.weatherCode, data.current.isDay));
+        setScrubIndex(data.nowIndex);
         // refresh history
         fetch("/api/history")
           .then((r) => r.json())
           .then((d) => setHistory(d.history ?? []))
           .catch(() => {});
-        // ai insights
+        // ai insights (only for current "now")
         aiCtrl.current?.abort();
         aiCtrl.current = new AbortController();
-        setInsightsLoading(true);
+        setAiLoading(true);
         fetch("/api/ai-insights", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -94,21 +119,21 @@ export default function WeatherApp() {
         })
           .then((r) => r.json())
           .then((d) => {
-            setInsights(d.insights ?? null);
-            setInsightsSource(d.source ?? "heuristic");
+            setAiInsights(d.insights ?? null);
+            setAiSource(d.source ?? "heuristic");
           })
           .catch(() => {})
-          .finally(() => setInsightsLoading(false));
+          .finally(() => setAiLoading(false));
       } catch (e) {
         setError(e instanceof Error ? e.message : "Unexpected error");
       } finally {
         setLoading(false);
       }
     },
-    [applyTheme]
+    []
   );
 
-  // Initial fetch + favorites
+  // initial fetch + favorites/history
   useEffect(() => {
     fetch("/api/favorites")
       .then((r) => r.json())
@@ -226,6 +251,13 @@ export default function WeatherApp() {
     setFavorites(d.favorites ?? []);
   }, []);
 
+  // pick which insights to show
+  const displayInsights = useMemo(() => {
+    if (!weather || !snapshot) return aiInsights;
+    if (isAtNow) return aiInsights;
+    return buildHeuristicInsights(weather, snapshot, { scrubbed: true });
+  }, [weather, snapshot, isAtNow, aiInsights]);
+
   return (
     <>
       <div className="theme-bg" />
@@ -299,7 +331,7 @@ export default function WeatherApp() {
                 <Loader2 className="animate-spin accent" />
                 <span className="text-sub">Reading the sky…</span>
               </motion.div>
-            ) : weather ? (
+            ) : weather && snapshot ? (
               <motion.div
                 key={`${weather.place.latitude},${weather.place.longitude}`}
                 className="space-y-4 md:space-y-6"
@@ -308,21 +340,41 @@ export default function WeatherApp() {
               >
                 <CurrentWeather
                   weather={weather}
+                  snapshot={snapshot}
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
+                  scrubbing={!isAtNow}
+                />
+                <TimeScrubber
+                  hourly={weather.hourly}
+                  index={scrubIndex}
+                  nowIndex={weather.nowIndex}
+                  onChange={setScrubIndex}
+                  onScrubStateChange={setScrubbing}
                 />
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                   <div className="lg:col-span-2 space-y-4 md:space-y-6">
-                    <HourlyForecast hourly={weather.hourly} />
-                    <DailyForecast daily={weather.daily} />
+                    <HourlyForecast
+                      hourly={weather.hourly}
+                      nowIndex={weather.nowIndex}
+                      scrubIndex={scrubIndex}
+                      onPickHour={setScrubIndex}
+                    />
+                    <DailyForecast
+                      daily={weather.daily}
+                      hourly={weather.hourly}
+                      scrubIndex={scrubIndex}
+                      onPickDay={setScrubIndex}
+                    />
                   </div>
                   <div className="space-y-4 md:space-y-6">
                     <AIInsights
-                      insights={insights}
-                      loading={insightsLoading}
-                      source={insightsSource}
+                      insights={displayInsights}
+                      loading={aiLoading && isAtNow}
+                      source={aiSource}
+                      scrubbing={!isAtNow}
                     />
-                    <WeatherDetails weather={weather} />
+                    <WeatherDetails weather={weather} snapshot={snapshot} />
                   </div>
                 </div>
               </motion.div>

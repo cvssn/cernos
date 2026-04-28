@@ -37,6 +37,15 @@ body {
   z-index: -2;
 }
 
+body.scrubbing .theme-bg {
+  transition: background 220ms ease-out;
+}
+
+body.scrubbing .glass,
+body.scrubbing .glass-strong {
+  transition: background-color 220ms ease-out, border-color 220ms ease-out;
+}
+
 .theme-noise {
   position: fixed;
   inset: 0;

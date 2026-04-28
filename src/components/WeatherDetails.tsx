@@ -2,64 +2,84 @@
 
 import { motion } from "framer-motion";
 import { Wind, Droplets, Eye, Gauge, SunMedium, Sunrise, Sunset, Leaf } from "lucide-react";
-import type { WeatherPayload } from "@/lib/types";
+import type { Snapshot, WeatherPayload } from "@/lib/types";
 
-export default function WeatherDetails({ weather }: { weather: WeatherPayload }) {
-  const c = weather.current;
-  const today = weather.daily[0];
+type Props = { weather: WeatherPayload; snapshot: Snapshot };
+
+export default function WeatherDetails({ weather, snapshot }: Props) {
+  const dKey = snapshot.time.slice(0, 10);
+  const day = weather.daily.find((d) => d.date === dKey) ?? weather.daily[0];
   const aqi = weather.airQuality?.europeanAqi;
 
-  const aqiLabel = aqi == null ? null : aqi <= 20 ? "Good" : aqi <= 40 ? "Fair" : aqi <= 60 ? "Moderate" : aqi <= 80 ? "Poor" : "Very poor";
-  const uvLabel =
-    c.uvIndex == null
-      ? "—"
-      : c.uvIndex < 3
-      ? "Low"
-      : c.uvIndex < 6
+  const aqiLabel =
+    aqi == null
+      ? null
+      : aqi <= 20
+      ? "Good"
+      : aqi <= 40
+      ? "Fair"
+      : aqi <= 60
       ? "Moderate"
-      : c.uvIndex < 8
+      : aqi <= 80
+      ? "Poor"
+      : "Very poor";
+  const uvLabel =
+    snapshot.uvIndex == null
+      ? "—"
+      : snapshot.uvIndex < 3
+      ? "Low"
+      : snapshot.uvIndex < 6
+      ? "Moderate"
+      : snapshot.uvIndex < 8
       ? "High"
-      : c.uvIndex < 11
+      : snapshot.uvIndex < 11
       ? "Very high"
       : "Extreme";
 
-  const sunrise = today
-    ? new Date(today.sunrise).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+  const sunrise = day
+    ? new Date(day.sunrise).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
     : "—";
-  const sunset = today
-    ? new Date(today.sunset).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+  const sunset = day
+    ? new Date(day.sunset).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
     : "—";
 
   const items = [
     {
       icon: <Wind size={18} />,
       label: "Wind",
-      value: `${Math.round(c.windSpeed)} km/h`,
-      hint: directionLabel(c.windDirection),
+      value: `${Math.round(snapshot.windSpeed)} km/h`,
+      hint: directionLabel(snapshot.windDirection),
     },
     {
       icon: <Droplets size={18} />,
       label: "Humidity",
-      value: `${c.humidity}%`,
-      hint: c.humidity > 70 ? "Humid" : c.humidity < 30 ? "Dry" : "Comfortable",
+      value: `${snapshot.humidity}%`,
+      hint:
+        snapshot.humidity > 70 ? "Humid" : snapshot.humidity < 30 ? "Dry" : "Comfortable",
     },
     {
       icon: <Gauge size={18} />,
       label: "Pressure",
-      value: `${Math.round(c.pressure)} hPa`,
-      hint: c.pressure < 1000 ? "Low" : c.pressure > 1020 ? "High" : "Steady",
+      value: `${Math.round(snapshot.pressure)} hPa`,
+      hint:
+        snapshot.pressure < 1000 ? "Low" : snapshot.pressure > 1020 ? "High" : "Steady",
     },
     {
       icon: <SunMedium size={18} />,
       label: "UV index",
-      value: c.uvIndex != null ? Math.round(c.uvIndex).toString() : "—",
+      value: snapshot.uvIndex != null ? Math.round(snapshot.uvIndex).toString() : "—",
       hint: uvLabel,
     },
     {
       icon: <Eye size={18} />,
       label: "Cloud cover",
-      value: `${c.cloudCover}%`,
-      hint: c.cloudCover < 25 ? "Clear" : c.cloudCover < 70 ? "Partly cloudy" : "Overcast",
+      value: `${snapshot.cloudCover}%`,
+      hint:
+        snapshot.cloudCover < 25
+          ? "Clear"
+          : snapshot.cloudCover < 70
+          ? "Partly cloudy"
+          : "Overcast",
     },
     {
       icon: <Leaf size={18} />,
@@ -71,13 +91,13 @@ export default function WeatherDetails({ weather }: { weather: WeatherPayload })
       icon: <Sunrise size={18} />,
       label: "Sunrise",
       value: sunrise,
-      hint: "Today",
+      hint: dKey === new Date().toISOString().slice(0, 10) ? "Today" : "That day",
     },
     {
       icon: <Sunset size={18} />,
       label: "Sunset",
       value: sunset,
-      hint: "Today",
+      hint: dKey === new Date().toISOString().slice(0, 10) ? "Today" : "That day",
     },
   ];
 
@@ -106,5 +126,5 @@ export default function WeatherDetails({ weather }: { weather: WeatherPayload })
 
 function directionLabel(deg: number) {
   const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  return dirs[Math.round(((deg % 360) / 45)) % 8];
+  return dirs[Math.round((deg % 360) / 45) % 8];
 }
