@@ -1,16 +1,67 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Loader2, Clock } from "lucide-react";
+import { Sparkles, Loader2, Clock, Volume2, Square } from "lucide-react";
 
 type Props = {
-  insights: string[] | null;
+  narrative: string | null;
   loading: boolean;
   source: "claude" | "heuristic" | null;
   scrubbing: boolean;
 };
 
-export default function AIInsights({ insights, loading, source, scrubbing }: Props) {
+export default function AIInsights({
+  narrative,
+  loading,
+  source,
+  scrubbing,
+}: Props) {
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const utterRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  useEffect(() => {
+    setSpeechSupported(
+      typeof window !== "undefined" && "speechSynthesis" in window
+    );
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined") {
+        window.speechSynthesis?.cancel();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.speechSynthesis?.cancel();
+    setSpeaking(false);
+  }, [narrative]);
+
+  const handleSpeak = useCallback(() => {
+    if (!narrative) return;
+    const synth =
+      typeof window !== "undefined" ? window.speechSynthesis : null;
+    if (!synth) return;
+    if (speaking) {
+      synth.cancel();
+      setSpeaking(false);
+      return;
+    }
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(narrative);
+    u.rate = 1.0;
+    u.pitch = 1.05;
+    u.onend = () => setSpeaking(false);
+    u.onerror = () => setSpeaking(false);
+    utterRef.current = u;
+    synth.speak(u);
+    setSpeaking(true);
+  }, [narrative, speaking]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -18,56 +69,61 @@ export default function AIInsights({ insights, loading, source, scrubbing }: Pro
       transition={{ duration: 0.4, delay: 0.25 }}
       className="glass-strong p-5 md:p-6"
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span className="accent">
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="accent shrink-0">
             {scrubbing ? <Clock size={16} /> : <Sparkles size={16} />}
           </span>
-          <h2 className="text-main font-semibold">
+          <h2 className="text-main font-semibold truncate">
             {scrubbing ? "Forecast brief" : "Today's brief"}
           </h2>
         </div>
-        <span className="text-sub text-xs uppercase tracking-wider">
-          {scrubbing ? "Live" : source === "claude" ? "Claude" : "Smart"}
-        </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-sub text-xs uppercase tracking-wider">
+            {scrubbing ? "Live" : source === "claude" ? "Claude" : "Smart"}
+          </span>
+          {speechSupported && narrative && (
+            <button
+              onClick={handleSpeak}
+              aria-label={speaking ? "Stop speaking" : "Speak narrative"}
+              aria-pressed={speaking}
+              className={`glass px-2.5 py-1.5 text-xs flex items-center gap-1.5 transition active:scale-[0.96] hover:scale-[1.04] ${
+                speaking ? "ring-accent" : ""
+              }`}
+            >
+              {speaking ? (
+                <Square size={12} className="accent" />
+              ) : (
+                <Volume2 size={12} className="accent" />
+              )}
+              <span>{speaking ? "Stop" : "Speak"}</span>
+            </button>
+          )}
+        </div>
       </div>
-      {loading || !insights ? (
+      {loading || !narrative ? (
         <div className="space-y-3">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="flex items-start gap-3">
-              <div className="mt-1.5 size-1.5 rounded-full bg-accent shrink-0" />
-              <div className="flex-1 h-4 rounded-md shimmer" />
-            </div>
-          ))}
+          <div className="h-4 rounded-md shimmer w-[92%]" />
+          <div className="h-4 rounded-md shimmer w-[78%]" />
+          <div className="h-4 rounded-md shimmer w-[55%]" />
           {loading && (
             <div className="text-sub text-xs flex items-center gap-2 mt-2">
-              <Loader2 size={12} className="animate-spin" /> Thinking…
+              <Loader2 size={12} className="animate-spin" /> Composing…
             </div>
           )}
         </div>
       ) : (
         <AnimatePresence mode="wait">
-          <motion.ul
-            key={insights.join("|")}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+          <motion.p
+            key={narrative}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="space-y-2.5"
+            transition={{ duration: 0.25 }}
+            className="text-main text-[15px] md:text-base leading-relaxed"
           >
-            {insights.map((line, i) => (
-              <motion.li
-                key={i}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25, delay: i * 0.05 }}
-                className="flex items-start gap-3 text-main text-sm md:text-[15px] leading-snug"
-              >
-                <span className="mt-1.5 size-1.5 rounded-full bg-accent shrink-0" />
-                <span>{line}</span>
-              </motion.li>
-            ))}
-          </motion.ul>
+            {narrative}
+          </motion.p>
         </AnimatePresence>
       )}
     </motion.div>

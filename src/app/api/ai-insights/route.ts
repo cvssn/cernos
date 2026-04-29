@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { describeWeather } from "@/lib/weather-codes";
-import { buildHeuristicInsights } from "@/lib/insights";
+import { buildHeuristicNarrative } from "@/lib/insights";
 import type { WeatherPayload } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json({
-      insights: buildHeuristicInsights(w, w.current),
+      narrative: buildHeuristicNarrative(w, w.current),
       source: "heuristic",
     });
   }
@@ -24,42 +24,51 @@ export async function POST(req: NextRequest) {
   try {
     const client = new Anthropic({ apiKey });
     const cond = describeWeather(w.current.weatherCode);
+    const dayKey = w.current.time.slice(0, 10);
+    const dayHours = w.hourly.filter((h) => h.time.slice(0, 10) === dayKey);
+    const fromIdx = dayHours.findIndex((h) => h.time === w.current.time);
+    const remaining = fromIdx >= 0 ? dayHours.slice(fromIdx) : dayHours;
+    const arc = remaining
+      .slice(0, 14)
+      .map((h) => {
+        const hh = h.time.slice(11, 16);
+        const t = Math.round(h.temperature);
+        const c = describeWeather(h.weatherCode).label.toLowerCase();
+        const p = Math.round(h.precipitationProbability ?? 0);
+        return `${hh} ${t}°C ${c} ${p}% rain`;
+      })
+      .join("\n");
+
+    const today = w.daily[0];
     const summary = `Location: ${w.place.name}${w.place.admin1 ? ", " + w.place.admin1 : ""}${w.place.country ? ", " + w.place.country : ""}
-Now: ${Math.round(w.current.temperature)}°C (feels ${Math.round(w.current.apparentTemperature)}°C), ${cond.label}
-Humidity: ${w.current.humidity}%
-Wind: ${Math.round(w.current.windSpeed)} km/h
-UV index: ${w.current.uvIndex ?? "n/a"}
-Cloud cover: ${w.current.cloudCover}%
-Today high/low: ${Math.round(w.daily[0]?.temperatureMax ?? 0)}°C / ${Math.round(w.daily[0]?.temperatureMin ?? 0)}°C
-Rain chance today: ${w.daily[0]?.precipitationProbabilityMax ?? 0}%
-Air quality (EU): ${w.airQuality?.europeanAqi ?? "n/a"}`;
+Now (${w.current.time.slice(11, 16)}): ${Math.round(w.current.temperature)}°C feels ${Math.round(w.current.apparentTemperature)}°C, ${cond.label}
+Today: high ${Math.round(today?.temperatureMax ?? 0)}°C / low ${Math.round(today?.temperatureMin ?? 0)}°C, ${today?.precipitationProbabilityMax ?? 0}% max rain chance
+Hourly arc:
+${arc}`;
 
     const msg = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 380,
+      max_tokens: 220,
       system:
-        "You are a friendly weather concierge. Given current weather, write 3 short bullet points: (1) a one-line vibe summary, (2) what to wear, (3) one practical recommendation (commute, activity, health). Be warm, specific, under 25 words per bullet. Use no emojis. Output exactly 3 lines starting with '- '.",
+        "You write a single flowing weather narrative as exactly two sentences. Cover: the starting conditions, how the day evolves (the peak temperature and roughly when it lands), any rain or storms with rough timing (e.g. 'around 4pm'), and how the evening settles. Conversational, plain sentence case, no bullets, no headers, no quotation marks, no emojis, no markdown. Under 50 words total. Round temperatures to whole degrees and include the °C symbol. Example output: 'Cool 9°C start, pushes to 16°C by 2pm with brief showers around 4, clears for a calm evening.'",
       messages: [{ role: "user", content: summary }],
     });
     const text = msg.content
       .filter((b): b is Anthropic.TextBlock => b.type === "text")
       .map((b) => b.text)
-      .join("\n")
+      .join(" ")
+      .replace(/^["'`\s]+|["'`\s]+$/g, "")
+      .replace(/\s+/g, " ")
       .trim();
 
-    const lines = text
-      .split("\n")
-      .map((l) => l.replace(/^[-*]\s*/, "").trim())
-      .filter(Boolean)
-      .slice(0, 3);
     return NextResponse.json({
-      insights: lines.length ? lines : buildHeuristicInsights(w, w.current),
-      source: "claude",
+      narrative: text || buildHeuristicNarrative(w, w.current),
+      source: text ? "claude" : "heuristic",
     });
   } catch (err) {
     console.error("ai-insights error", err);
     return NextResponse.json({
-      insights: buildHeuristicInsights(w, w.current),
+      narrative: buildHeuristicNarrative(w, w.current),
       source: "heuristic",
     });
   }

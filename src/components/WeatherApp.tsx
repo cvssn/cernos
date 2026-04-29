@@ -24,7 +24,7 @@ const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
 });
 import { paletteFor } from "@/lib/weather-themes";
 import { themeForCondition } from "@/lib/weather-codes";
-import { buildHeuristicInsights } from "@/lib/insights";
+import { buildHeuristicNarrative } from "@/lib/insights";
 import type {
   FavoriteRow,
   HistoryRow,
@@ -53,7 +53,7 @@ export default function WeatherApp() {
   const [geolocating, setGeolocating] = useState(false);
   const [favorites, setFavorites] = useState<FavoriteRow[]>([]);
   const [history, setHistory] = useState<HistoryRow[]>([]);
-  const [aiInsights, setAiInsights] = useState<string[] | null>(null);
+  const [aiNarrative, setAiNarrative] = useState<string | null>(null);
   const [aiSource, setAiSource] = useState<"claude" | "heuristic" | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [scrubIndex, setScrubIndex] = useState(0);
@@ -98,7 +98,7 @@ export default function WeatherApp() {
     async (p: Place) => {
       setLoading(true);
       setError(null);
-      setAiInsights(null);
+      setAiNarrative(null);
       try {
         const url = new URL("/api/weather", window.location.origin);
         url.searchParams.set("lat", String(p.latitude));
@@ -129,7 +129,7 @@ export default function WeatherApp() {
         })
           .then((r) => r.json())
           .then((d) => {
-            setAiInsights(d.insights ?? null);
+            setAiNarrative(d.narrative ?? null);
             setAiSource(d.source ?? "heuristic");
           })
           .catch(() => {})
@@ -261,12 +261,11 @@ export default function WeatherApp() {
     setFavorites(d.favorites ?? []);
   }, []);
 
-  // pick which insights to show
-  const displayInsights = useMemo(() => {
-    if (!weather || !snapshot) return aiInsights;
-    if (isAtNow) return aiInsights;
-    return buildHeuristicInsights(weather, snapshot, { scrubbed: true });
-  }, [weather, snapshot, isAtNow, aiInsights]);
+  const displayNarrative = useMemo(() => {
+    if (!weather || !snapshot) return aiNarrative;
+    if (isAtNow) return aiNarrative;
+    return buildHeuristicNarrative(weather, snapshot, { scrubbed: true });
+  }, [weather, snapshot, isAtNow, aiNarrative]);
 
   return (
     <>
@@ -384,7 +383,7 @@ export default function WeatherApp() {
                   </div>
                   <div className="space-y-4 md:space-y-6">
                     <AIInsights
-                      insights={displayInsights}
+                      narrative={displayNarrative}
                       loading={aiLoading && isAtNow}
                       source={aiSource}
                       scrubbing={!isAtNow}
