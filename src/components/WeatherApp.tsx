@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cloud, AlertCircle, Loader2, RefreshCw } from "lucide-react";
+import { Cloud, AlertCircle, Loader2, RefreshCw, Radar } from "lucide-react";
 import SearchBar from "./SearchBar";
 import CurrentWeather from "./CurrentWeather";
 import HourlyForecast from "./HourlyForecast";
@@ -12,6 +13,15 @@ import AIInsights from "./AIInsights";
 import Favorites from "./Favorites";
 import AnimatedBackground from "./AnimatedBackground";
 import TimeScrubber from "./TimeScrubber";
+
+const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
+  ssr: false,
+  loading: () => (
+    <div className="glass-strong h-[420px] flex items-center justify-center text-sub gap-2">
+      <Radar size={16} className="accent animate-pulse" /> Loading radar…
+    </div>
+  ),
+});
 import { paletteFor } from "@/lib/weather-themes";
 import { themeForCondition } from "@/lib/weather-codes";
 import { buildHeuristicInsights } from "@/lib/insights";
@@ -344,6 +354,11 @@ export default function WeatherApp() {
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
                   scrubbing={!isAtNow}
+                />
+                <PrecipitationRadar
+                  lat={place.latitude}
+                  lon={place.longitude}
+                  placeName={place.name}
                 />
                 <TimeScrubber
                   hourly={weather.hourly}
