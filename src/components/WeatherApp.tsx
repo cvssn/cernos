@@ -13,6 +13,8 @@ import AIInsights from "./AIInsights";
 import Favorites from "./Favorites";
 import AnimatedBackground from "./AnimatedBackground";
 import TimeScrubber from "./TimeScrubber";
+import WeatherAlerts from "./WeatherAlerts";
+import PollenPanel from "./PollenPanel";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
@@ -347,6 +349,7 @@ export default function WeatherApp() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
+                {isAtNow && <WeatherAlerts alerts={weather.alerts} />}
                 <CurrentWeather
                   weather={weather}
                   snapshot={snapshot}
@@ -389,6 +392,7 @@ export default function WeatherApp() {
                       scrubbing={!isAtNow}
                     />
                     <WeatherDetails weather={weather} snapshot={snapshot} />
+                    <PollenPanel pollen={weather.pollen} />
                   </div>
                 </div>
               </motion.div>

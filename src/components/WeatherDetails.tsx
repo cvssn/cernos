@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Wind, Droplets, Eye, Gauge, SunMedium, Sunrise, Sunset, Leaf } from "lucide-react";
+import { Wind, Droplets, Eye, Gauge, SunMedium, Leaf } from "lucide-react";
+import SunArc from "./SunArc";
 import type { Snapshot, WeatherPayload } from "@/lib/types";
 
 type Props = { weather: WeatherPayload; snapshot: Snapshot };
@@ -35,13 +36,6 @@ export default function WeatherDetails({ weather, snapshot }: Props) {
       : snapshot.uvIndex < 11
       ? "Very high"
       : "Extreme";
-
-  const sunrise = day
-    ? new Date(day.sunrise).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
-    : "—";
-  const sunset = day
-    ? new Date(day.sunset).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
-    : "—";
 
   const items = [
     {
@@ -87,40 +81,31 @@ export default function WeatherDetails({ weather, snapshot }: Props) {
       value: aqi != null ? Math.round(aqi).toString() : "—",
       hint: aqiLabel ?? "—",
     },
-    {
-      icon: <Sunrise size={18} />,
-      label: "Sunrise",
-      value: sunrise,
-      hint: dKey === new Date().toISOString().slice(0, 10) ? "Today" : "That day",
-    },
-    {
-      icon: <Sunset size={18} />,
-      label: "Sunset",
-      value: sunset,
-      hint: dKey === new Date().toISOString().slice(0, 10) ? "Today" : "That day",
-    },
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
-      className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-3"
-    >
-      {items.map((it) => (
-        <div key={it.label} className="glass p-3 min-w-0 overflow-hidden">
-          <div className="flex items-center gap-1.5 text-sub text-[10px] uppercase tracking-wider min-w-0">
-            <span className="accent shrink-0">{it.icon}</span>
-            <span className="truncate">{it.label}</span>
+    <div className="space-y-3">
+      <SunArc day={day} nowTime={snapshot.time} />
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-3"
+      >
+        {items.map((it) => (
+          <div key={it.label} className="glass p-3 min-w-0 overflow-hidden">
+            <div className="flex items-center gap-1.5 text-sub text-[10px] uppercase tracking-wider min-w-0">
+              <span className="accent shrink-0">{it.icon}</span>
+              <span className="truncate">{it.label}</span>
+            </div>
+            <div className="text-main text-lg font-semibold mt-2 leading-tight break-words">
+              {it.value}
+            </div>
+            <div className="text-sub text-[11px] mt-1 truncate">{it.hint}</div>
           </div>
-          <div className="text-main text-lg font-semibold mt-2 leading-tight break-words">
-            {it.value}
-          </div>
-          <div className="text-sub text-[11px] mt-1 truncate">{it.hint}</div>
-        </div>
-      ))}
-    </motion.div>
+        ))}
+      </motion.div>
+    </div>
   );
 }
 

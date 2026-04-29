@@ -47,6 +47,33 @@ export type AirQuality = {
   usAqi?: number;
 };
 
+export type PollenLevels = {
+  alder: number | null;
+  birch: number | null;
+  grass: number | null;
+  mugwort: number | null;
+  olive: number | null;
+  ragweed: number | null;
+};
+
+export type AlertSeverity = "watch" | "advisory" | "warning";
+
+export type WeatherAlert = {
+  id: string;
+  severity: AlertSeverity;
+  kind:
+    | "storm"
+    | "heat"
+    | "cold"
+    | "rain"
+    | "snow"
+    | "wind"
+    | "uv"
+    | "fog";
+  title: string;
+  detail: string;
+};
+
 export type HistoricalContext = {
   yesterdayTempAtHour: number | null;
   monthlyAvgMean: number | null;
@@ -62,6 +89,8 @@ export type WeatherPayload = {
   airQuality?: AirQuality;
   nowIndex: number;
   historical?: HistoricalContext;
+  pollen?: PollenLevels;
+  alerts?: WeatherAlert[];
 };
 
 export type ThemeName =

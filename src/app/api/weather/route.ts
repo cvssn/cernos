@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordHistory } from "@/lib/db";
-import type { HistoricalContext, Snapshot, WeatherPayload } from "@/lib/types";
+import type {
+  AlertSeverity,
+  DailyEntry,
+  HistoricalContext,
+  PollenLevels,
+  Snapshot,
+  WeatherAlert,
+  WeatherPayload,
+} from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -80,9 +88,25 @@ export async function GET(req: NextRequest) {
   const aqUrl = new URL("https://air-quality-api.open-meteo.com/v1/air-quality");
   aqUrl.searchParams.set("latitude", lat);
   aqUrl.searchParams.set("longitude", lon);
-  aqUrl.searchParams.set("current", "pm10,pm2_5,ozone,european_aqi,us_aqi");
+  aqUrl.searchParams.set(
+    "current",
+    [
+      "pm10",
+      "pm2_5",
+      "ozone",
+      "european_aqi",
+      "us_aqi",
+      "alder_pollen",
+      "birch_pollen",
+      "grass_pollen",
+      "mugwort_pollen",
+      "olive_pollen",
+      "ragweed_pollen",
+    ].join(",")
+  );
   aqUrl.searchParams.set("timezone", timezone);
   let airQuality;
+  let pollen: PollenLevels | undefined;
   try {
     const ar = await fetch(aqUrl, { cache: "no-store" });
     if (ar.ok) {
@@ -94,9 +118,27 @@ export async function GET(req: NextRequest) {
         europeanAqi: ad?.current?.european_aqi,
         usAqi: ad?.current?.us_aqi,
       };
+      const p = ad?.current ?? {};
+      const hasAny =
+        p.alder_pollen != null ||
+        p.birch_pollen != null ||
+        p.grass_pollen != null ||
+        p.mugwort_pollen != null ||
+        p.olive_pollen != null ||
+        p.ragweed_pollen != null;
+      if (hasAny) {
+        pollen = {
+          alder: numOrNull(p.alder_pollen),
+          birch: numOrNull(p.birch_pollen),
+          grass: numOrNull(p.grass_pollen),
+          mugwort: numOrNull(p.mugwort_pollen),
+          olive: numOrNull(p.olive_pollen),
+          ragweed: numOrNull(p.ragweed_pollen),
+        };
+      }
     }
   } catch {
-    // air quality is optional
+    // air quality + pollen are optional
   }
 
   const hourlyTimes: string[] = data.hourly?.time ?? [];
@@ -155,6 +197,8 @@ export async function GET(req: NextRequest) {
     currentTimeStr
   );
 
+  const alerts = deriveAlerts(hourlyAll, dailyEntries, nowIndex);
+
   const payload: WeatherPayload = {
     place: {
       id: 0,
@@ -171,6 +215,8 @@ export async function GET(req: NextRequest) {
     airQuality,
     nowIndex,
     historical,
+    pollen,
+    alerts,
   };
 
   try {
@@ -279,6 +325,90 @@ async function fetchHistoricalContext(
   } catch {
     return undefined;
   }
+}
+
+function numOrNull(v: unknown): number | null {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+// Open-Meteo has no first-party severe-weather alerts endpoint, so we derive
+// advisories/warnings from the forecast we already fetch. Looks at the next 48h
+// of hourly data and the 7-day daily data; thresholds chosen to be conservative.
+function deriveAlerts(
+  hourly: Snapshot[],
+  daily: DailyEntry[],
+  nowIndex: number
+): WeatherAlert[] {
+  const alerts: WeatherAlert[] = [];
+  const window = hourly.slice(nowIndex, nowIndex + 48);
+
+  const stormHours = window.filter((h) => [95, 96, 99].includes(h.weatherCode));
+  if (stormHours.length) {
+    const severe = stormHours.some((h) => [96, 99].includes(h.weatherCode));
+    alerts.push({
+      id: "storm",
+      severity: severe ? "warning" : "advisory",
+      kind: "storm",
+      title: severe ? "Severe thunderstorm warning" : "Thunderstorm advisory",
+      detail: `Thunderstorms likely in the next ${stormHours.length}h.`,
+    });
+  }
+
+  const today = daily[0];
+  if (today) {
+    if (today.temperatureMax >= 40) {
+      alerts.push(makeAlert("heat", "warning", "Extreme heat warning", `High of ${Math.round(today.temperatureMax)}° expected today.`));
+    } else if (today.temperatureMax >= 35) {
+      alerts.push(makeAlert("heat", "advisory", "Heat advisory", `High of ${Math.round(today.temperatureMax)}° expected today.`));
+    }
+    if (today.temperatureMin <= -20) {
+      alerts.push(makeAlert("cold", "warning", "Extreme cold warning", `Low of ${Math.round(today.temperatureMin)}° expected today.`));
+    } else if (today.temperatureMin <= -10) {
+      alerts.push(makeAlert("cold", "advisory", "Cold advisory", `Low of ${Math.round(today.temperatureMin)}° expected today.`));
+    }
+    if (today.windSpeedMax >= 80) {
+      alerts.push(makeAlert("wind", "warning", "High wind warning", `Gusts up to ${Math.round(today.windSpeedMax)} km/h.`));
+    } else if (today.windSpeedMax >= 60) {
+      alerts.push(makeAlert("wind", "advisory", "Wind advisory", `Winds up to ${Math.round(today.windSpeedMax)} km/h.`));
+    }
+    if (today.precipitationSum >= 50) {
+      alerts.push(makeAlert("rain", "warning", "Flood-risk rain warning", `${Math.round(today.precipitationSum)} mm expected today.`));
+    } else if (today.precipitationSum >= 25) {
+      alerts.push(makeAlert("rain", "advisory", "Heavy rain advisory", `${Math.round(today.precipitationSum)} mm expected today.`));
+    }
+    if (today.uvIndexMax >= 11) {
+      alerts.push(makeAlert("uv", "advisory", "Extreme UV advisory", `UV index peaks at ${Math.round(today.uvIndexMax)}. Cover up.`));
+    }
+    const snowHours = window.filter((h) => [71, 73, 75, 77, 85, 86].includes(h.weatherCode));
+    if (snowHours.length >= 3) {
+      const heavy = snowHours.some((h) => [75, 86].includes(h.weatherCode));
+      alerts.push(makeAlert("snow", heavy ? "warning" : "advisory", heavy ? "Heavy snow warning" : "Snow advisory", `Snow expected over ${snowHours.length}h.`));
+    }
+    const fogHours = window.slice(0, 12).filter((h) => [45, 48].includes(h.weatherCode));
+    if (fogHours.length >= 2) {
+      alerts.push(makeAlert("fog", "advisory", "Dense fog advisory", "Reduced visibility likely in the next 12h."));
+    }
+  }
+
+  // de-dupe by kind, keeping highest severity
+  const rank: Record<AlertSeverity, number> = { watch: 0, advisory: 1, warning: 2 };
+  const byKind = new Map<string, WeatherAlert>();
+  for (const a of alerts) {
+    const cur = byKind.get(a.kind);
+    if (!cur || rank[a.severity] > rank[cur.severity]) byKind.set(a.kind, a);
+  }
+  return Array.from(byKind.values()).sort(
+    (a, b) => rank[b.severity] - rank[a.severity]
+  );
+}
+
+function makeAlert(
+  kind: WeatherAlert["kind"],
+  severity: AlertSeverity,
+  title: string,
+  detail: string
+): WeatherAlert {
+  return { id: `${kind}-${severity}`, kind, severity, title, detail };
 }
 
 // Open-Meteo returns local-time strings (e.g. "2026-04-28T03:15") in the location's timezone.
