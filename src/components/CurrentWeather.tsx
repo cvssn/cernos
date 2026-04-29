@@ -1,10 +1,18 @@
 "use client";
 
+import { Fragment } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, HeartOff, History } from "lucide-react";
+import {
+  Heart,
+  HeartOff,
+  History,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+} from "lucide-react";
 import { WeatherIcon } from "./WeatherIcon";
 import { describeWeather } from "@/lib/weather-codes";
-import type { Snapshot, WeatherPayload } from "@/lib/types";
+import type { HistoricalContext, Snapshot, WeatherPayload } from "@/lib/types";
 
 type Props = {
   weather: WeatherPayload;
@@ -82,6 +90,13 @@ export default function CurrentWeather({
         </button>
       </div>
 
+      {!scrubbing && weather.historical && (
+        <HistoricalStrip
+          currentTemp={weather.current.temperature}
+          historical={weather.historical}
+        />
+      )}
+
       <div className="mt-6 md:mt-8 grid grid-cols-1 md:grid-cols-[1fr,auto] items-center gap-6">
         <div className="flex items-end gap-4">
           <AnimatePresence mode="wait">
@@ -138,5 +153,71 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div className="text-xs text-sub uppercase tracking-wider">{label}</div>
       <div className="text-main text-xl font-semibold mt-1">{value}</div>
     </div>
+  );
+}
+
+function HistoricalStrip({
+  currentTemp,
+  historical,
+}: {
+  currentTemp: number;
+  historical: HistoricalContext;
+}) {
+  const items: { delta: number; label: string }[] = [];
+  if (historical.monthlyAvgMean != null) {
+    items.push({
+      delta: currentTemp - historical.monthlyAvgMean,
+      label: `the ${historical.monthName} average`,
+    });
+  }
+  if (historical.yesterdayTempAtHour != null) {
+    items.push({
+      delta: currentTemp - historical.yesterdayTempAtHour,
+      label: "yesterday",
+    });
+  }
+  if (items.length === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-sub"
+    >
+      {items.map((item, i) => {
+        const rounded = Math.round(item.delta);
+        const abs = Math.abs(rounded);
+        const Icon =
+          rounded > 0 ? TrendingUp : rounded < 0 ? TrendingDown : Minus;
+        const word =
+          rounded > 0 ? "warmer" : rounded < 0 ? "cooler" : "same as";
+        const isMeaningful = abs >= 1;
+        return (
+          <Fragment key={item.label}>
+            {i > 0 && (
+              <span className="text-sub opacity-40" aria-hidden>
+                ·
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1.5">
+              <Icon
+                size={14}
+                className={isMeaningful ? "accent" : "text-sub opacity-70"}
+                strokeWidth={2}
+              />
+              {isMeaningful ? (
+                <span>
+                  <span className="text-main font-medium">{abs}°</span> {word}{" "}
+                  than {item.label}
+                </span>
+              ) : (
+                <span>about the same as {item.label}</span>
+              )}
+            </span>
+          </Fragment>
+        );
+      })}
+    </motion.div>
   );
 }

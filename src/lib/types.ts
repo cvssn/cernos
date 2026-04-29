@@ -47,6 +47,13 @@ export type AirQuality = {
   usAqi?: number;
 };
 
+export type HistoricalContext = {
+  yesterdayTempAtHour: number | null;
+  monthlyAvgMean: number | null;
+  monthName: string;
+  climatologyYears: number;
+};
+
 export type WeatherPayload = {
   place: Place;
   current: Snapshot;
@@ -54,6 +61,7 @@ export type WeatherPayload = {
   daily: DailyEntry[];
   airQuality?: AirQuality;
   nowIndex: number;
+  historical?: HistoricalContext;
 };
 
 export type ThemeName =

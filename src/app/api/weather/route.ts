@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordHistory } from "@/lib/db";
-import type { Snapshot, WeatherPayload } from "@/lib/types";
+import type { HistoricalContext, Snapshot, WeatherPayload } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -148,6 +148,13 @@ export async function GET(req: NextRequest) {
     uvIndex: data.current.uv_index,
   };
 
+  const historical = await fetchHistoricalContext(
+    lat,
+    lon,
+    timezone,
+    currentTimeStr
+  );
+
   const payload: WeatherPayload = {
     place: {
       id: 0,
@@ -163,6 +170,7 @@ export async function GET(req: NextRequest) {
     daily: dailyEntries,
     airQuality,
     nowIndex,
+    historical,
   };
 
   try {
@@ -178,6 +186,99 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json(payload);
+}
+
+const CLIMATOLOGY_YEARS = 10;
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+async function fetchHistoricalContext(
+  lat: string,
+  lon: string,
+  timezone: string,
+  currentTimeStr: string
+): Promise<HistoricalContext | undefined> {
+  if (!currentTimeStr) return undefined;
+  const yearStr = currentTimeStr.slice(0, 4);
+  const monthStr = currentTimeStr.slice(5, 7);
+  const hourStr = currentTimeStr.slice(11, 13);
+  const year = Number(yearStr);
+  const monthIdx = Number(monthStr) - 1;
+  if (!Number.isFinite(year) || monthIdx < 0 || monthIdx > 11) return undefined;
+
+  const yUrl = new URL("https://api.open-meteo.com/v1/forecast");
+  yUrl.searchParams.set("latitude", lat);
+  yUrl.searchParams.set("longitude", lon);
+  yUrl.searchParams.set("hourly", "temperature_2m");
+  yUrl.searchParams.set("past_days", "1");
+  yUrl.searchParams.set("forecast_days", "1");
+  yUrl.searchParams.set("timezone", timezone);
+
+  const cUrl = new URL("https://archive-api.open-meteo.com/v1/archive");
+  cUrl.searchParams.set("latitude", lat);
+  cUrl.searchParams.set("longitude", lon);
+  cUrl.searchParams.set("start_date", `${year - CLIMATOLOGY_YEARS}-01-01`);
+  cUrl.searchParams.set("end_date", `${year - 1}-12-31`);
+  cUrl.searchParams.set("daily", "temperature_2m_mean");
+  cUrl.searchParams.set("timezone", timezone);
+
+  try {
+    const [ry, rc] = await Promise.all([
+      fetch(yUrl, { next: { revalidate: 1800 } }),
+      fetch(cUrl, { next: { revalidate: 60 * 60 * 24 } }),
+    ]);
+
+    let yesterdayTempAtHour: number | null = null;
+    if (ry.ok) {
+      const yd = await ry.json();
+      const times: string[] = yd?.hourly?.time ?? [];
+      const temps: number[] = yd?.hourly?.temperature_2m ?? [];
+      const yesterdayDate = times[0]?.slice(0, 10);
+      const idx = times.findIndex(
+        (t) => t.slice(0, 10) === yesterdayDate && t.slice(11, 13) === hourStr
+      );
+      if (idx >= 0 && typeof temps[idx] === "number") {
+        yesterdayTempAtHour = temps[idx];
+      }
+    }
+
+    let monthlyAvgMean: number | null = null;
+    if (rc.ok) {
+      const cd = await rc.json();
+      const dates: string[] = cd?.daily?.time ?? [];
+      const means: (number | null)[] = cd?.daily?.temperature_2m_mean ?? [];
+      let sum = 0;
+      let count = 0;
+      for (let i = 0; i < dates.length; i++) {
+        if (dates[i]?.slice(5, 7) === monthStr && typeof means[i] === "number") {
+          sum += means[i] as number;
+          count++;
+        }
+      }
+      if (count > 0) monthlyAvgMean = sum / count;
+    }
+
+    return {
+      yesterdayTempAtHour,
+      monthlyAvgMean,
+      monthName: MONTH_NAMES[monthIdx],
+      climatologyYears: CLIMATOLOGY_YEARS,
+    };
+  } catch {
+    return undefined;
+  }
 }
 
 // Open-Meteo returns local-time strings (e.g. "2026-04-28T03:15") in the location's timezone.
