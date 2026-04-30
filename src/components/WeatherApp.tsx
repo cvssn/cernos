@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cloud, AlertCircle, Loader2, RefreshCw, Radar } from "lucide-react";
+import { Cloud, AlertCircle, Loader2, RefreshCw, Radar, Headphones } from "lucide-react";
 import SearchBar from "./SearchBar";
 import CurrentWeather from "./CurrentWeather";
 import HourlyForecast from "./HourlyForecast";
@@ -15,6 +15,7 @@ import AnimatedBackground from "./AnimatedBackground";
 import TimeScrubber from "./TimeScrubber";
 import WeatherAlerts from "./WeatherAlerts";
 import PollenPanel from "./PollenPanel";
+import AmbientMode from "./AmbientMode";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
@@ -60,6 +61,7 @@ export default function WeatherApp() {
   const [aiLoading, setAiLoading] = useState(false);
   const [scrubIndex, setScrubIndex] = useState(0);
   const [scrubbing, setScrubbing] = useState(false);
+  const [ambientOpen, setAmbientOpen] = useState(false);
   const aiCtrl = useRef<AbortController | null>(null);
 
   const snapshot: Snapshot | null = useMemo(() => {
@@ -292,14 +294,26 @@ export default function WeatherApp() {
               Living Weather
             </span>
           </div>
-          <button
-            onClick={() => fetchWeather(place)}
-            className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition"
-            aria-label="Refresh"
-          >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-            <span className="hidden sm:inline">Refresh</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setAmbientOpen(true)}
+              disabled={!weather || !snapshot}
+              className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Enter ambient mode"
+              title="Ambient mode — fullscreen sky + soundscape"
+            >
+              <Headphones size={14} className="text-white" />
+              <span className="hidden sm:inline">Ambient</span>
+            </button>
+            <button
+              onClick={() => fetchWeather(place)}
+              className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition"
+              aria-label="Refresh"
+            >
+              <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+              <span className="hidden sm:inline">Refresh</span>
+            </button>
+          </div>
         </header>
 
         <div className="space-y-4 md:space-y-6">
@@ -404,6 +418,14 @@ export default function WeatherApp() {
           </footer>
         </div>
       </main>
+
+      <AmbientMode
+        open={ambientOpen}
+        onClose={() => setAmbientOpen(false)}
+        theme={theme}
+        snapshot={snapshot}
+        place={place}
+      />
     </>
   );
 }
