@@ -15,6 +15,7 @@ import AnimatedBackground from "./AnimatedBackground";
 import TimeScrubber from "./TimeScrubber";
 import WeatherAlerts from "./WeatherAlerts";
 import PollenPanel from "./PollenPanel";
+import TonightsSkyPanel from "./TonightsSkyPanel";
 import AmbientMode from "./AmbientMode";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
@@ -407,6 +408,10 @@ export default function WeatherApp() {
                     />
                     <WeatherDetails weather={weather} snapshot={snapshot} />
                     <PollenPanel pollen={weather.pollen} />
+                    <TonightsSkyPanel
+                      latitude={place.latitude}
+                      longitude={place.longitude}
+                    />
                   </div>
                 </div>
               </motion.div>
