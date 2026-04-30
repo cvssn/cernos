@@ -16,6 +16,7 @@ import TimeScrubber from "./TimeScrubber";
 import WeatherAlerts from "./WeatherAlerts";
 import PollenPanel from "./PollenPanel";
 import TonightsSkyPanel from "./TonightsSkyPanel";
+import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
@@ -63,6 +64,7 @@ export default function WeatherApp() {
   const [scrubIndex, setScrubIndex] = useState(0);
   const [scrubbing, setScrubbing] = useState(false);
   const [ambientOpen, setAmbientOpen] = useState(false);
+  const [spaceWeather, setSpaceWeather] = useState<SpaceWeather | null>(null);
   const aiCtrl = useRef<AbortController | null>(null);
 
   const snapshot: Snapshot | null = useMemo(() => {
@@ -99,11 +101,21 @@ export default function WeatherApp() {
     return () => document.body.classList.remove("scrubbing");
   }, [scrubbing]);
 
+  // aurora tint: only when plausible AND it's currently night at this place
+  const auroraActive = !!(
+    spaceWeather?.plausible && snapshot && !snapshot.isDay
+  );
+  useEffect(() => {
+    document.body.classList.toggle("aurora", auroraActive);
+    return () => document.body.classList.remove("aurora");
+  }, [auroraActive]);
+
   const fetchWeather = useCallback(
     async (p: Place) => {
       setLoading(true);
       setError(null);
       setAiNarrative(null);
+      setSpaceWeather(null);
       try {
         const url = new URL("/api/weather", window.location.origin);
         url.searchParams.set("lat", String(p.latitude));
@@ -121,6 +133,11 @@ export default function WeatherApp() {
         fetch("/api/history")
           .then((r) => r.json())
           .then((d) => setHistory(d.history ?? []))
+          .catch(() => {});
+        // space weather (Kp + aurora plausibility for this lat/lon)
+        fetch(`/api/space-weather?lat=${p.latitude}&lon=${p.longitude}`)
+          .then((r) => r.json())
+          .then((d) => setSpaceWeather(d as SpaceWeather))
           .catch(() => {});
         // ai insights (only for current "now")
         aiCtrl.current?.abort();
@@ -275,6 +292,7 @@ export default function WeatherApp() {
   return (
     <>
       <div className="theme-bg" />
+      <div className="aurora-veil" />
       <div className="theme-noise" />
       <AnimatedBackground theme={theme} />
 
@@ -364,6 +382,12 @@ export default function WeatherApp() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
+                {isAtNow && (
+                  <AuroraBanner
+                    data={spaceWeather}
+                    isNight={!snapshot.isDay}
+                  />
+                )}
                 {isAtNow && <WeatherAlerts alerts={weather.alerts} />}
                 <CurrentWeather
                   weather={weather}
