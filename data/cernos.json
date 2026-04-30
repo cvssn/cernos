@@ -12,15 +12,6 @@
   ],
   "history": [
     {
-      "id": 11,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-04-28T03:01:08.368Z"
-    },
-    {
       "id": 12,
       "name": "London",
       "country": "UK",
@@ -235,7 +226,16 @@
       "latitude": 51.5074,
       "longitude": -0.1278,
       "created_at": "2026-04-30T12:34:51.278Z"
+    },
+    {
+      "id": 37,
+      "name": "London",
+      "country": "United Kingdom",
+      "admin1": "England",
+      "latitude": 51.5074,
+      "longitude": -0.1278,
+      "created_at": "2026-04-30T12:43:32.949Z"
     }
   ],
-  "nextId": 37
+  "nextId": 38
 }
