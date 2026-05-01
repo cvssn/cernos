@@ -2,9 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { CloudRain, Play, Pause, Radar } from "lucide-react";
+import { CloudRain, Play, Pause, Radar, Zap, ZapOff } from "lucide-react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import {
+  connectLightning,
+  type LightningHandle,
+  type LightningStatus,
+} from "@/lib/lightning";
 
 type Frame = { time: number; path: string };
 type RainViewerData = {
@@ -21,6 +26,10 @@ const TILE_SIZE = 256;
 const FRAME_INTERVAL_MS = 500;
 const PAUSE_AT_NOW_MS = 1500;
 const RADAR_OPACITY = 0.78;
+
+const STRIKE_TTL_MS = 5000;
+const MAX_STRIKES = 250;
+const STRIKE_RATE_WINDOW_MS = 60_000;
 
 export default function PrecipitationRadar({
   lat,
@@ -39,6 +48,15 @@ export default function PrecipitationRadar({
   const [frameIdx, setFrameIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lightningOn, setLightningOn] = useState(true);
+  const [lightningStatus, setLightningStatus] =
+    useState<LightningStatus>("connecting");
+  const [strikeRate, setStrikeRate] = useState(0);
+  const lightningHandleRef = useRef<LightningHandle | null>(null);
+  const strikesRef = useRef<
+    Map<string, { marker: L.Marker; expires: number }>
+  >(new Map());
+  const recentStrikeTimesRef = useRef<number[]>([]);
 
   const frames = useMemo<Frame[]>(() => {
     if (!data) return [];
@@ -149,6 +167,104 @@ export default function PrecipitationRadar({
     return () => clearTimeout(t);
   }, [playing, frames.length, frameIdx, nowFrameIdx]);
 
+  // Live lightning strikes via Blitzortung. Only render strikes within the
+  // current map view (with a small buffer) and cap concurrent markers.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const clearAll = () => {
+      strikesRef.current.forEach(({ marker }) => marker.remove());
+      strikesRef.current.clear();
+      recentStrikeTimesRef.current = [];
+      setStrikeRate(0);
+    };
+
+    if (!lightningOn) {
+      lightningHandleRef.current?.close();
+      lightningHandleRef.current = null;
+      clearAll();
+      setLightningStatus("offline");
+      return;
+    }
+
+    const handle = connectLightning(
+      (s) => {
+        const m = mapRef.current;
+        if (!m) return;
+        const bounds = m.getBounds().pad(0.4);
+        if (!bounds.contains([s.lat, s.lon])) return;
+
+        const id = `${s.time}|${s.lat.toFixed(4)}|${s.lon.toFixed(4)}`;
+        if (strikesRef.current.has(id)) return;
+
+        const icon = L.divIcon({
+          className: "lightning-icon",
+          html: '<span class="lightning-bolt"></span>',
+          iconSize: [14, 14],
+          iconAnchor: [7, 7],
+        });
+        const marker = L.marker([s.lat, s.lon], {
+          icon,
+          interactive: false,
+          keyboard: false,
+        }).addTo(m);
+        strikesRef.current.set(id, {
+          marker,
+          expires: Date.now() + STRIKE_TTL_MS,
+        });
+
+        // LRU cap — evict the oldest if we exceed the limit.
+        if (strikesRef.current.size > MAX_STRIKES) {
+          const firstKey = strikesRef.current.keys().next().value;
+          if (firstKey) {
+            const oldest = strikesRef.current.get(firstKey);
+            oldest?.marker.remove();
+            strikesRef.current.delete(firstKey);
+          }
+        }
+
+        const now = Date.now();
+        recentStrikeTimesRef.current.push(now);
+        const cutoff = now - STRIKE_RATE_WINDOW_MS;
+        while (
+          recentStrikeTimesRef.current.length > 0 &&
+          recentStrikeTimesRef.current[0] < cutoff
+        ) {
+          recentStrikeTimesRef.current.shift();
+        }
+        setStrikeRate(recentStrikeTimesRef.current.length);
+      },
+      (status) => setLightningStatus(status)
+    );
+    lightningHandleRef.current = handle;
+
+    const sweep = setInterval(() => {
+      const now = Date.now();
+      strikesRef.current.forEach((entry, id) => {
+        if (now > entry.expires) {
+          entry.marker.remove();
+          strikesRef.current.delete(id);
+        }
+      });
+      const cutoff = now - STRIKE_RATE_WINDOW_MS;
+      while (
+        recentStrikeTimesRef.current.length > 0 &&
+        recentStrikeTimesRef.current[0] < cutoff
+      ) {
+        recentStrikeTimesRef.current.shift();
+      }
+      setStrikeRate(recentStrikeTimesRef.current.length);
+    }, 1000);
+
+    return () => {
+      clearInterval(sweep);
+      handle.close();
+      lightningHandleRef.current = null;
+      clearAll();
+    };
+  }, [lightningOn]);
+
   const currentFrame = frames[frameIdx];
   const frameTime = currentFrame ? new Date(currentFrame.time * 1000) : null;
   const minutesFromNow =
@@ -193,15 +309,59 @@ export default function PrecipitationRadar({
             <div className="text-sub text-xs truncate">{subtitle}</div>
           </div>
         </div>
-        <button
-          onClick={() => setPlaying((p) => !p)}
-          aria-label={playing ? "Pause radar" : "Play radar"}
-          className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition shrink-0"
-          disabled={!data}
-        >
-          {playing ? <Pause size={14} /> : <Play size={14} />}
-          <span className="hidden sm:inline">{playing ? "Pause" : "Play"}</span>
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setLightningOn((v) => !v)}
+            aria-label={
+              lightningOn ? "Hide lightning strikes" : "Show lightning strikes"
+            }
+            title={
+              lightningOn
+                ? `Lightning ${
+                    lightningStatus === "live"
+                      ? "live"
+                      : lightningStatus === "connecting"
+                      ? "connecting…"
+                      : "offline"
+                  } · ${strikeRate}/min in view`
+                : "Show live lightning strikes (Blitzortung)"
+            }
+            className={`glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition ${
+              lightningOn && lightningStatus === "live" ? "ring-accent" : ""
+            }`}
+          >
+            {lightningOn ? (
+              <Zap
+                size={14}
+                className={
+                  lightningStatus === "live"
+                    ? "accent"
+                    : lightningStatus === "connecting"
+                    ? "opacity-70"
+                    : "opacity-50"
+                }
+              />
+            ) : (
+              <ZapOff size={14} className="opacity-70" />
+            )}
+            <span className="hidden sm:inline">
+              {lightningOn && strikeRate > 0
+                ? `${strikeRate}/min`
+                : "Strikes"}
+            </span>
+          </button>
+          <button
+            onClick={() => setPlaying((p) => !p)}
+            aria-label={playing ? "Pause radar" : "Play radar"}
+            className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition"
+            disabled={!data}
+          >
+            {playing ? <Pause size={14} /> : <Play size={14} />}
+            <span className="hidden sm:inline">
+              {playing ? "Pause" : "Play"}
+            </span>
+          </button>
+        </div>
       </div>
 
       <div className="relative">
@@ -252,7 +412,7 @@ export default function PrecipitationRadar({
             <span>+30m</span>
           </div>
           <div className="text-sub text-[10px] text-right mt-2 opacity-70">
-            Tiles © CARTO · Radar © RainViewer
+            Tiles © CARTO · Radar © RainViewer · Strikes © Blitzortung.org
           </div>
         </div>
       )}
