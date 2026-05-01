@@ -2,10 +2,15 @@ node_modules/
 .next/
 out/
 *.log
+
 .env
 .env.local
+
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+
 data/*.db
 data/*.db-journal
+
+test
