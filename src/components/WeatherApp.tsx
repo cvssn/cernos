@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cloud, AlertCircle, Loader2, RefreshCw, Radar, Headphones } from "lucide-react";
+import { Cloud, AlertCircle, Loader2, RefreshCw, Radar, Headphones, Thermometer } from "lucide-react";
 import SearchBar from "./SearchBar";
 import CurrentWeather from "./CurrentWeather";
 import HourlyForecast from "./HourlyForecast";
@@ -17,6 +17,7 @@ import WeatherAlerts from "./WeatherAlerts";
 import PollenPanel from "./PollenPanel";
 import TonightsSkyPanel from "./TonightsSkyPanel";
 import PressureTendency from "./PressureTendency";
+import ClimateLens from "./ClimateLens";
 import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
 
@@ -66,6 +67,7 @@ export default function WeatherApp() {
   const [scrubbing, setScrubbing] = useState(false);
   const [ambientOpen, setAmbientOpen] = useState(false);
   const [spaceWeather, setSpaceWeather] = useState<SpaceWeather | null>(null);
+  const [climateLensOn, setClimateLensOn] = useState(false);
   const aiCtrl = useRef<AbortController | null>(null);
 
   const snapshot: Snapshot | null = useMemo(() => {
@@ -316,6 +318,24 @@ export default function WeatherApp() {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={() => setClimateLensOn((v) => !v)}
+              disabled={!weather}
+              className={`glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed ${
+                climateLensOn ? "ring-accent" : ""
+              }`}
+              aria-pressed={climateLensOn}
+              aria-label={
+                climateLensOn ? "Hide climate lens" : "Show climate lens"
+              }
+              title="Climate lens — compare today against the 1990s baseline"
+            >
+              <Thermometer
+                size={14}
+                className={climateLensOn ? "accent" : "text-white"}
+              />
+              <span className="hidden sm:inline">Climate Lens</span>
+            </button>
+            <button
               onClick={() => setAmbientOpen(true)}
               disabled={!weather || !snapshot}
               className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed"
@@ -383,6 +403,13 @@ export default function WeatherApp() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
+                <ClimateLens
+                  enabled={climateLensOn}
+                  latitude={place.latitude}
+                  longitude={place.longitude}
+                  timezone={place.timezone}
+                  onClose={() => setClimateLensOn(false)}
+                />
                 {isAtNow && (
                   <AuroraBanner
                     data={spaceWeather}
