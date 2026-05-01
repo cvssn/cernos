@@ -16,6 +16,7 @@ import TimeScrubber from "./TimeScrubber";
 import WeatherAlerts from "./WeatherAlerts";
 import PollenPanel from "./PollenPanel";
 import TonightsSkyPanel from "./TonightsSkyPanel";
+import PressureTendency from "./PressureTendency";
 import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
 
@@ -431,6 +432,11 @@ export default function WeatherApp() {
                       scrubbing={!isAtNow}
                     />
                     <WeatherDetails weather={weather} snapshot={snapshot} />
+                    <PressureTendency
+                      latitude={place.latitude}
+                      longitude={place.longitude}
+                      timezone={place.timezone}
+                    />
                     <PollenPanel pollen={weather.pollen} />
                     <TonightsSkyPanel
                       latitude={place.latitude}
