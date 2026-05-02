@@ -94,6 +94,19 @@ body.scrubbing .glass-strong {
   box-shadow: 0 0 0 3px var(--ring);
 }
 
+@keyframes voicePulseRing {
+  0%, 100% {
+    box-shadow: 0 0 0 3px var(--ring), 0 0 0 0 var(--ring);
+  }
+  50% {
+    box-shadow: 0 0 0 3px var(--ring), 0 0 0 8px transparent;
+  }
+}
+
+.voice-pulse {
+  animation: voicePulseRing 1.2s ease-in-out infinite;
+}
+
 .divider {
   height: 1px;
   background: var(--border);

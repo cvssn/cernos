@@ -23,6 +23,7 @@ import SkyJournal from "./SkyJournal";
 import type { StoredJournalEntry } from "@/lib/db";
 import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
+import VoiceAsk from "./VoiceAsk";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
@@ -343,6 +344,7 @@ export default function WeatherApp() {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <VoiceAsk weather={weather} />
             <button
               onClick={() => setClimateLensOn((v) => !v)}
               disabled={!weather}
