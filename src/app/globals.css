@@ -176,6 +176,76 @@ body.scrubbing .glass-strong {
   93%, 96% { opacity: 1; }
 }
 
+@keyframes cloud-drift {
+  0% { transform: translateX(-30vw); }
+  100% { transform: translateX(130vw); }
+}
+
+@keyframes cloud-drift-reverse {
+  0% { transform: translateX(130vw); }
+  100% { transform: translateX(-30vw); }
+}
+
+@keyframes bird-fly {
+  0% { transform: translate3d(-20vw, 0, 0); }
+  100% { transform: translate3d(120vw, -8vh, 0); }
+}
+
+@keyframes wing-flap {
+  0%, 100% { transform: scaleY(1) scaleX(1); }
+  50% { transform: scaleY(0.35) scaleX(1.05); }
+}
+
+@keyframes firefly-drift {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.85; }
+  50% { transform: translate(60px, -30px); opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translate(-30px, 20px); opacity: 0; }
+}
+
+@keyframes shoot-star {
+  0% { transform: translate(0, 0) rotate(-22deg); opacity: 0; }
+  4% { opacity: 1; }
+  20% { opacity: 0; }
+  100% { transform: translate(60vw, 22vh) rotate(-22deg); opacity: 0; }
+}
+
+@keyframes mist-drift {
+  0% { transform: translateX(-15vw); opacity: 0.55; }
+  50% { opacity: 0.85; }
+  100% { transform: translateX(115vw); opacity: 0.55; }
+}
+
+@keyframes rain-splash {
+  0% { transform: scale(0); opacity: 0; }
+  20% { opacity: 0.85; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes bolt-flash {
+  0%, 89%, 100% { opacity: 0; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(-2px); }
+  92% { opacity: 0.4; }
+  93% { opacity: 1; }
+  96% { opacity: 0; }
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+@keyframes sun-flare-shimmer {
+  0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+  50% { opacity: 0.9; transform: scale(1.06) rotate(2deg); }
+}
+
+@keyframes moon-glow {
+  0%, 100% { box-shadow: 0 0 60px rgba(196, 181, 253, 0.45), 0 0 120px rgba(196, 181, 253, 0.18); }
+  50% { box-shadow: 0 0 80px rgba(196, 181, 253, 0.6), 0 0 160px rgba(196, 181, 253, 0.25); }
+}
+
 @keyframes pulseSun {
   0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px var(--accent)); }
   50% { transform: scale(1.05); filter: drop-shadow(0 0 60px var(--accent)); }
