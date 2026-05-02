@@ -19,6 +19,8 @@ import TonightsSkyPanel from "./TonightsSkyPanel";
 import PressureTendency from "./PressureTendency";
 import ClimateLens from "./ClimateLens";
 import SkyTimelapse from "./SkyTimelapse";
+import SkyJournal from "./SkyJournal";
+import type { StoredJournalEntry } from "@/lib/db";
 import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
 
@@ -69,6 +71,10 @@ export default function WeatherApp() {
   const [ambientOpen, setAmbientOpen] = useState(false);
   const [spaceWeather, setSpaceWeather] = useState<SpaceWeather | null>(null);
   const [climateLensOn, setClimateLensOn] = useState(false);
+  const [journalEntries, setJournalEntries] = useState<StoredJournalEntry[]>(
+    []
+  );
+  const [journalToday, setJournalToday] = useState<string | null>(null);
   const aiCtrl = useRef<AbortController | null>(null);
 
   const snapshot: Snapshot | null = useMemo(() => {
@@ -143,6 +149,21 @@ export default function WeatherApp() {
           .then((r) => r.json())
           .then((d) => setSpaceWeather(d as SpaceWeather))
           .catch(() => {});
+        // sky journal — upsert today's entry, refresh list
+        fetch("/api/sky-journal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ weather: data }),
+        })
+          .then((r) => r.json())
+          .then((d: {
+            entry?: StoredJournalEntry;
+            entries?: StoredJournalEntry[];
+          }) => {
+            if (d.entry) setJournalToday(d.entry.date);
+            if (d.entries) setJournalEntries(d.entries);
+          })
+          .catch(() => {});
         // ai insights (only for current "now")
         aiCtrl.current?.abort();
         aiCtrl.current = new AbortController();
@@ -178,6 +199,10 @@ export default function WeatherApp() {
     fetch("/api/history")
       .then((r) => r.json())
       .then((d) => setHistory(d.history ?? []))
+      .catch(() => {});
+    fetch("/api/sky-journal")
+      .then((r) => r.json())
+      .then((d) => setJournalEntries(d.entries ?? []))
       .catch(() => {});
     fetchWeather(place);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -474,6 +499,10 @@ export default function WeatherApp() {
                     <TonightsSkyPanel
                       latitude={place.latitude}
                       longitude={place.longitude}
+                    />
+                    <SkyJournal
+                      entries={journalEntries}
+                      todayDate={journalToday}
                     />
                   </div>
                 </div>

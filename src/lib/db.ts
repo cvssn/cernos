@@ -16,9 +16,22 @@ type StoredFavorite = {
 
 type StoredHistory = StoredFavorite;
 
+export type StoredJournalEntry = {
+  date: string;
+  text: string;
+  place: string;
+  weatherCode: number;
+  isDay: boolean;
+  tempMax: number;
+  tempMin: number;
+  source: "claude" | "heuristic";
+  created_at: string;
+};
+
 type DbShape = {
   favorites: StoredFavorite[];
   history: StoredHistory[];
+  journal: StoredJournalEntry[];
   nextId: number;
 };
 
@@ -29,7 +42,7 @@ function ensureDir() {
 function read(): DbShape {
   ensureDir();
   if (!fs.existsSync(DB_FILE)) {
-    return { favorites: [], history: [], nextId: 1 };
+    return { favorites: [], history: [], journal: [], nextId: 1 };
   }
   try {
     const raw = fs.readFileSync(DB_FILE, "utf8");
@@ -37,10 +50,11 @@ function read(): DbShape {
     return {
       favorites: parsed.favorites ?? [],
       history: parsed.history ?? [],
+      journal: parsed.journal ?? [],
       nextId: parsed.nextId ?? 1,
     };
   } catch {
-    return { favorites: [], history: [], nextId: 1 };
+    return { favorites: [], history: [], journal: [], nextId: 1 };
   }
 }
 
@@ -108,6 +122,29 @@ export function recordHistory(p: StoredPlace) {
     db.history = db.history.slice(-25);
   }
   write(db);
+}
+
+export function getJournalEntry(date: string): StoredJournalEntry | undefined {
+  const db = read();
+  return db.journal.find((e) => e.date === date);
+}
+
+export function upsertJournalEntry(
+  entry: StoredJournalEntry
+): StoredJournalEntry {
+  const db = read();
+  const existing = db.journal.find((e) => e.date === entry.date);
+  if (existing) return existing;
+  db.journal.push(entry);
+  write(db);
+  return entry;
+}
+
+export function listJournal(limit = 365): StoredJournalEntry[] {
+  const db = read();
+  return [...db.journal]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit);
 }
 
 export function listHistory(limit = 8) {
