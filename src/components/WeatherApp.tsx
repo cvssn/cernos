@@ -24,6 +24,7 @@ import type { StoredJournalEntry } from "@/lib/db";
 import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
 import VoiceAsk from "./VoiceAsk";
+import ActivityMatchmaker from "./ActivityMatchmaker";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
@@ -489,6 +490,10 @@ export default function WeatherApp() {
                       narrative={displayNarrative}
                       loading={aiLoading && isAtNow}
                       source={aiSource}
+                      scrubbing={!isAtNow}
+                    />
+                    <ActivityMatchmaker
+                      weather={isAtNow ? weather : null}
                       scrubbing={!isAtNow}
                     />
                     <WeatherDetails weather={weather} snapshot={snapshot} />
