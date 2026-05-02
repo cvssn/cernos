@@ -61,9 +61,9 @@ export default function SearchBar({ onSelect, onUseLocation, geolocating }: Prop
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onFocus={() => results.length && setOpen(true)}
-          placeholder="Search any city, town, or place…"
+          placeholder="search any city, town, or place…"
           className="flex-1 bg-transparent text-main placeholder:text-sub outline-none text-sm md:text-base"
-          aria-label="Search location"
+          aria-label="search location"
         />
         {q ? (
           <button
@@ -72,7 +72,7 @@ export default function SearchBar({ onSelect, onUseLocation, geolocating }: Prop
               setResults([]);
             }}
             className="text-sub hover:text-main transition"
-            aria-label="Clear search"
+            aria-label="clear search"
           >
             <X size={16} />
           </button>
@@ -82,10 +82,10 @@ export default function SearchBar({ onSelect, onUseLocation, geolocating }: Prop
           onClick={onUseLocation}
           disabled={geolocating}
           className="flex items-center gap-1 px-2 py-1 rounded-lg text-sm text-main hover:bg-white/10 transition disabled:opacity-60"
-          aria-label="Use my location"
+          aria-label="use my location"
         >
           {geolocating ? <Loader2 size={16} className="animate-spin" /> : <MapPin size={16} />}
-          <span className="hidden sm:inline">Locate</span>
+          <span className="hidden sm:inline">locate</span>
         </button>
       </div>
       <AnimatePresence>
@@ -99,7 +99,7 @@ export default function SearchBar({ onSelect, onUseLocation, geolocating }: Prop
           >
             {loading && (
               <div className="px-4 py-3 text-sub text-sm flex items-center gap-2">
-                <Loader2 size={14} className="animate-spin" /> Searching…
+                <Loader2 size={14} className="animate-spin" /> searching…
               </div>
             )}
             {results.map((r) => (

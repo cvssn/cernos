@@ -7,12 +7,12 @@ import type { PollenLevels } from "@/lib/types";
 type Props = { pollen: PollenLevels | undefined };
 
 const TYPES: Array<{ key: keyof PollenLevels; label: string }> = [
-  { key: "grass", label: "Grass" },
-  { key: "birch", label: "Birch" },
-  { key: "alder", label: "Alder" },
-  { key: "olive", label: "Olive" },
-  { key: "ragweed", label: "Ragweed" },
-  { key: "mugwort", label: "Mugwort" },
+  { key: "grass", label: "grass" },
+  { key: "birch", label: "birch" },
+  { key: "alder", label: "alder" },
+  { key: "olive", label: "olive" },
+  { key: "ragweed", label: "ragweed" },
+  { key: "mugwort", label: "mugwort" },
 ];
 
 export default function PollenPanel({ pollen }: Props) {
@@ -47,7 +47,7 @@ export default function PollenPanel({ pollen }: Props) {
       <div className="flex items-center justify-between text-sub text-[10px] uppercase tracking-wider mb-3">
         <div className="flex items-center gap-1.5">
           <Flower2 size={14} className="accent" />
-          <span>Pollen</span>
+          <span>pollen</span>
         </div>
         {peak && (
           <span
@@ -85,7 +85,7 @@ export default function PollenPanel({ pollen }: Props) {
         ))}
       </div>
       <div className="text-sub text-[10px] mt-3">
-        Grains/m³ · Open-Meteo (Europe coverage)
+        grains/m³ · open-meteo (europe coverage)
       </div>
     </motion.div>
   );
@@ -100,9 +100,9 @@ type PollenBucket = {
 
 function bucketFor(v: number | null): PollenBucket {
   if (v == null) return { rank: -1, label: "—", color: "var(--subtext)", fill: 0 };
-  if (v < 1) return { rank: 0, label: "None", color: "#86efac", fill: 6 };
-  if (v < 20) return { rank: 1, label: "Low", color: "#a3e635", fill: 25 };
-  if (v < 50) return { rank: 2, label: "Moderate", color: "#fbbf24", fill: 50 };
-  if (v < 100) return { rank: 3, label: "High", color: "#fb923c", fill: 75 };
-  return { rank: 4, label: "Very high", color: "#ef4444", fill: 100 };
+  if (v < 1) return { rank: 0, label: "none", color: "#86efac", fill: 6 };
+  if (v < 20) return { rank: 1, label: "low", color: "#a3e635", fill: 25 };
+  if (v < 50) return { rank: 2, label: "moderate", color: "#fbbf24", fill: 50 };
+  if (v < 100) return { rank: 3, label: "high", color: "#fb923c", fill: 75 };
+  return { rank: 4, label: "very high", color: "#ef4444", fill: 100 };
 }

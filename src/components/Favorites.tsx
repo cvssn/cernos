@@ -21,7 +21,7 @@ export default function Favorites({ favorites, history, onSelect, onRemove }: Pr
       className="space-y-4"
     >
       {favorites.length > 0 && (
-        <Section icon={<Star size={14} />} label="Favorites">
+        <Section icon={<Star size={14} />} label="favorites">
           <AnimatePresence>
             {favorites.map((f) => (
               <motion.button
@@ -52,14 +52,14 @@ export default function Favorites({ favorites, history, onSelect, onRemove }: Pr
                     onRemove(f.id);
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
+                    if (e.key === "enter" || e.key === " ") {
                       e.preventDefault();
                       e.stopPropagation();
                       onRemove(f.id);
                     }
                   }}
                   className="ml-1 text-sub hover:text-main transition opacity-60 group-hover:opacity-100"
-                  aria-label={`Remove ${f.name}`}
+                  aria-label={`remove ${f.name}`}
                 >
                   <X size={12} />
                 </span>
@@ -69,7 +69,7 @@ export default function Favorites({ favorites, history, onSelect, onRemove }: Pr
         </Section>
       )}
       {history.length > 0 && (
-        <Section icon={<History size={14} />} label="Recent">
+        <Section icon={<History size={14} />} label="recent">
           {history.slice(0, 6).map((h) => (
             <button
               key={`${h.id}-${h.latitude}`}

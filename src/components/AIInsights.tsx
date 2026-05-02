@@ -75,12 +75,12 @@ export default function AIInsights({
             {scrubbing ? <Clock size={16} /> : <Sparkles size={16} />}
           </span>
           <h2 className="text-main font-semibold truncate">
-            {scrubbing ? "Forecast brief" : "Today's brief"}
+            {scrubbing ? "forecast brief" : "today's brief"}
           </h2>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-sub text-xs uppercase tracking-wider">
-            {scrubbing ? "Live" : source === "claude" ? "Claude" : "Smart"}
+            {scrubbing ? "live" : source === "claude" ? "claude" : "smart"}
           </span>
           {speechSupported && narrative && (
             <button
@@ -96,7 +96,7 @@ export default function AIInsights({
               ) : (
                 <Volume2 size={12} className="accent" />
               )}
-              <span>{speaking ? "Stop" : "Speak"}</span>
+              <span>{speaking ? "stop" : "speak"}</span>
             </button>
           )}
         </div>
@@ -108,7 +108,7 @@ export default function AIInsights({
           <div className="h-4 rounded-md shimmer w-[55%]" />
           {loading && (
             <div className="text-sub text-xs flex items-center gap-2 mt-2">
-              <Loader2 size={12} className="animate-spin" /> Composing…
+              <Loader2 size={12} className="animate-spin" /> composing…
             </div>
           )}
         </div>

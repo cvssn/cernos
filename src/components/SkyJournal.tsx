@@ -26,7 +26,7 @@ export default function SkyJournal({ entries, todayDate }: Props) {
       <div className="flex items-center justify-between text-sub text-[10px] uppercase tracking-wider mb-3">
         <div className="flex items-center gap-1.5">
           <BookOpen size={14} className="accent" />
-          <span>Sky Journal</span>
+          <span>sky journal</span>
         </div>
         <span className="text-[10px] normal-case tracking-normal text-sub">
           {entries.length} {entries.length === 1 ? "day" : "days"}
@@ -52,7 +52,7 @@ export default function SkyJournal({ entries, todayDate }: Props) {
               />
             </span>
             <span className="text-[10px] uppercase tracking-wider text-sub">
-              Today · {formatDateShort(today.date)}
+              today · {formatDateShort(today.date)}
             </span>
           </div>
           <p className="text-main text-sm leading-snug">{today.text}</p>
@@ -64,14 +64,14 @@ export default function SkyJournal({ entries, todayDate }: Props) {
 
       {past.length === 0 && !today && (
         <p className="text-sub text-xs leading-relaxed">
-          Your year-in-skies starts here. A line a day, growing into a small
+          your year-in-skies starts here. a line a day, growing into a small
           weather autobiography.
         </p>
       )}
 
       {past.length === 0 && today && (
         <p className="text-sub text-xs leading-relaxed">
-          Come back tomorrow — the journal grows one line at a time.
+          come back tomorrow — the journal grows one line at a time.
         </p>
       )}
 

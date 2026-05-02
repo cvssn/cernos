@@ -90,9 +90,9 @@ export default function TonightsSkyPanel({ latitude, longitude }: Props) {
           </div>
           <div className="text-sub text-[11px]">illuminated</div>
           <div className="text-sub text-[11px] mt-1.5 grid grid-cols-2 gap-x-2">
-            <span>Rise</span>
+            <span>rise</span>
             <span className="text-main">{formatRel(moon.rise, now)}</span>
-            <span>Set</span>
+            <span>set</span>
             <span className="text-main">{formatRel(moon.set, now)}</span>
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function TonightsSkyPanel({ latitude, longitude }: Props) {
       <Divider />
 
       <div className="text-sub text-[10px] uppercase tracking-wider mb-2">
-        Visible planets
+        visible planets
       </div>
       <div className="grid grid-cols-1 gap-1.5">
         {planets.map((p) => (
@@ -113,7 +113,7 @@ export default function TonightsSkyPanel({ latitude, longitude }: Props) {
         ))}
         {planets.every((p) => !p.visible) && (
           <div className="text-sub text-[11px] italic">
-            None above 5° right now
+            none above 5° right now
           </div>
         )}
       </div>
@@ -123,11 +123,11 @@ export default function TonightsSkyPanel({ latitude, longitude }: Props) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 text-sub text-[10px] uppercase tracking-wider">
           <Satellite size={12} className="accent" />
-          <span>Next ISS pass</span>
+          <span>next iss pass</span>
         </div>
         <div className="text-[11px] text-right min-w-0">
           {issLoading ? (
-            <span className="text-sub italic">Looking…</span>
+            <span className="text-sub italic">looking…</span>
           ) : iss ? (
             <>
               <span className="text-main font-medium">
@@ -138,7 +138,7 @@ export default function TonightsSkyPanel({ latitude, longitude }: Props) {
               </span>
             </>
           ) : (
-            <span className="text-sub italic">No pass in 48 h</span>
+            <span className="text-sub italic">no pass in 48h</span>
           )}
         </div>
       </div>

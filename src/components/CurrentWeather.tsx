@@ -69,7 +69,7 @@ export default function CurrentWeather({
                 <History size={12} /> {dayLabel} · {timeLabel}
               </span>
             ) : (
-              <span>Local time {timeLabel}</span>
+              <span>local time {timeLabel}</span>
             )}
           </div>
         </div>
@@ -80,11 +80,11 @@ export default function CurrentWeather({
         >
           {isFavorite ? (
             <>
-              <Heart size={16} fill="currentColor" /> Saved
+              <Heart size={16} fill="currentColor" /> saved
             </>
           ) : (
             <>
-              <HeartOff size={16} /> Save
+              <HeartOff size={16} /> save
             </>
           )}
         </button>
@@ -138,9 +138,9 @@ export default function CurrentWeather({
         </div>
 
         <div className="grid grid-cols-3 gap-3 md:gap-4 md:min-w-[280px]">
-          <Stat label="High" value={`${Math.round(day?.temperatureMax ?? snapshot.temperature)}°`} />
-          <Stat label="Low" value={`${Math.round(day?.temperatureMin ?? snapshot.temperature)}°`} />
-          <Stat label="Rain" value={`${Math.round(snapshot.precipitationProbability)}%`} />
+          <Stat label="high" value={`${Math.round(day?.temperatureMax ?? snapshot.temperature)}°`} />
+          <Stat label="low" value={`${Math.round(day?.temperatureMin ?? snapshot.temperature)}°`} />
+          <Stat label="rain" value={`${Math.round(snapshot.precipitationProbability)}%`} />
         </div>
       </div>
     </motion.div>

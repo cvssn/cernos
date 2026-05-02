@@ -336,10 +336,10 @@ export default function WeatherApp() {
               <Cloud size={26} strokeWidth={1.5} />
             </motion.div>
             <h1 className="text-main text-xl md:text-2xl font-semibold tracking-tight">
-              Cernos
+              cernos
             </h1>
             <span className="text-sub text-xs uppercase tracking-widest hidden sm:inline ml-1">
-              Living Weather
+              living weather
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -359,7 +359,7 @@ export default function WeatherApp() {
                 size={14}
                 className={climateLensOn ? "accent" : "text-white"}
               />
-              <span className="hidden sm:inline">Climate Lens</span>
+              <span className="hidden sm:inline">climate lens</span>
             </button>
             <button
               onClick={() => setAmbientOpen(true)}
@@ -369,7 +369,7 @@ export default function WeatherApp() {
               title="Ambient mode — fullscreen sky + soundscape"
             >
               <Headphones size={14} className="text-white" />
-              <span className="hidden sm:inline">Ambient</span>
+              <span className="hidden sm:inline">ambient</span>
             </button>
             <button
               onClick={() => fetchWeather(place)}
@@ -377,7 +377,7 @@ export default function WeatherApp() {
               aria-label="Refresh"
             >
               <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">refresh</span>
             </button>
           </div>
         </header>
@@ -407,7 +407,7 @@ export default function WeatherApp() {
               >
                 <AlertCircle className="accent shrink-0" />
                 <div>
-                  <div className="text-main font-medium">Something went wrong</div>
+                  <div className="text-main font-medium">something went wrong</div>
                   <div className="text-sub text-sm">{error}</div>
                 </div>
               </motion.div>
@@ -420,7 +420,7 @@ export default function WeatherApp() {
                 className="glass-strong p-10 flex items-center justify-center gap-3"
               >
                 <Loader2 className="animate-spin accent" />
-                <span className="text-sub">Reading the sky…</span>
+                <span className="text-sub">reading the sky…</span>
               </motion.div>
             ) : weather && snapshot ? (
               <motion.div
@@ -511,7 +511,7 @@ export default function WeatherApp() {
           </AnimatePresence>
 
           <footer className="text-center text-sub text-xs pt-6 pb-2">
-            Weather and air quality from Open-Meteo · Built with Next.js, Framer Motion, and Claude
+            weather and air quality from open-meteo · built with next.js, framer motion, and claude
           </footer>
         </div>
       </main>

@@ -43,7 +43,7 @@ export default function PressureTendency({
     if (timezone) url.searchParams.set("timezone", timezone);
     fetch(url)
       .then((r) => {
-        if (!r.ok) throw new Error("Pressure feed offline");
+        if (!r.ok) throw new Error("pressure feed offline");
         return r.json() as Promise<PressureHistoryPayload>;
       })
       .then((d) => {
@@ -52,7 +52,7 @@ export default function PressureTendency({
       })
       .catch((e) => {
         if (cancelled) return;
-        setError(e instanceof Error ? e.message : "Pressure feed offline");
+        setError(e instanceof Error ? e.message : "pressure feed offline");
       });
     return () => {
       cancelled = true;
@@ -78,27 +78,27 @@ export default function PressureTendency({
       <div className="flex items-center gap-2 mb-3">
         <Gauge className="accent shrink-0" size={18} strokeWidth={1.6} />
         <div className="text-main font-medium leading-tight">
-          Barometric Pressure
+          barometric pressure
         </div>
         <div className="text-sub text-xs ml-auto uppercase tracking-wider">
-          24 h trend
+          24h trend
         </div>
       </div>
 
       {error ? (
         <div className="text-sub text-sm">{error}</div>
       ) : !readings ? (
-        <div className="text-sub text-sm animate-pulse">Reading the glass…</div>
+        <div className="text-sub text-sm animate-pulse">reading the glass…</div>
       ) : !summary || !path ? (
         <div className="text-sub text-sm">
-          Not enough pressure data for this location.
+          not enough pressure data for this location.
         </div>
       ) : (
         <div className="space-y-3">
           <div className="flex items-baseline gap-3">
             <div className="text-main text-2xl font-semibold tabular-nums">
               {summary.current.toFixed(0)}
-              <span className="text-sub text-sm font-normal ml-1">hPa</span>
+              <span className="text-sub text-sm font-normal ml-1">hpa</span>
             </div>
             <TrendChip
               tendency={summary.tendency}
@@ -153,12 +153,12 @@ function TrendChip({
       className={`inline-flex items-center gap-1 text-xs ${colorClass}`}
       aria-label={`${tendencyLabel(tendency)}, ${sign}${Math.abs(
         delta3h
-      ).toFixed(1)} hPa in 3 hours`}
+      ).toFixed(1)} hpa in 3 hours`}
     >
       <Icon size={14} strokeWidth={2} />
       <span className="tabular-nums">
         {sign}
-        {Math.abs(delta3h).toFixed(1)} hPa / 3 h
+        {Math.abs(delta3h).toFixed(1)} hpa / 3h
       </span>
       <span className="text-sub">· {tendencyLabel(tendency)}</span>
     </div>

@@ -9,7 +9,7 @@ const RAD = 180 / Math.PI;
 export type EquatorialCoord = { ra: number; dec: number; distance?: number };
 export type HorizontalCoord = { altitude: number; azimuth: number };
 
-export type PlanetName = "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
+export type PlanetName = "mercury" | "venus" | "mars" | "jupiter" | "saturn";
 
 export type PlanetVisibility = {
   name: PlanetName;
@@ -214,8 +214,8 @@ type Elements = {
   M: (d: number) => number;
 };
 
-const PLANETS: Record<PlanetName | "Earth", Elements> = {
-  Mercury: {
+const PLANETS: Record<PlanetName | "earth", Elements> = {
+  mercury: {
     N: (d) => 48.3313 + 3.24587e-5 * d,
     i: (d) => 7.0047 + 5e-8 * d,
     w: (d) => 29.1241 + 1.01444e-5 * d,
@@ -223,7 +223,7 @@ const PLANETS: Record<PlanetName | "Earth", Elements> = {
     e: (d) => 0.205635 + 5.59e-10 * d,
     M: (d) => 168.6562 + 4.0923344368 * d,
   },
-  Venus: {
+  venus: {
     N: (d) => 76.6799 + 2.4659e-5 * d,
     i: (d) => 3.3946 + 2.75e-8 * d,
     w: (d) => 54.891 + 1.38374e-5 * d,
@@ -231,7 +231,7 @@ const PLANETS: Record<PlanetName | "Earth", Elements> = {
     e: (d) => 0.006773 - 1.302e-9 * d,
     M: (d) => 48.0052 + 1.6021302244 * d,
   },
-  Mars: {
+  mars: {
     N: (d) => 49.5574 + 2.11081e-5 * d,
     i: (d) => 1.8497 - 1.78e-8 * d,
     w: (d) => 286.5016 + 2.92961e-5 * d,
@@ -239,7 +239,7 @@ const PLANETS: Record<PlanetName | "Earth", Elements> = {
     e: (d) => 0.093405 + 2.516e-9 * d,
     M: (d) => 18.6021 + 0.5240207766 * d,
   },
-  Jupiter: {
+  jupiter: {
     N: (d) => 100.4542 + 2.76854e-5 * d,
     i: (d) => 1.303 - 1.557e-7 * d,
     w: (d) => 273.8777 + 1.64505e-5 * d,
@@ -247,7 +247,7 @@ const PLANETS: Record<PlanetName | "Earth", Elements> = {
     e: (d) => 0.048498 + 4.469e-9 * d,
     M: (d) => 19.895 + 0.0830853001 * d,
   },
-  Saturn: {
+  saturn: {
     N: (d) => 113.6634 + 2.3898e-5 * d,
     i: (d) => 2.4886 - 1.081e-7 * d,
     w: (d) => 339.3939 + 2.97661e-5 * d,
@@ -255,7 +255,7 @@ const PLANETS: Record<PlanetName | "Earth", Elements> = {
     e: (d) => 0.055546 - 9.499e-9 * d,
     M: (d) => 316.967 + 0.0334442282 * d,
   },
-  Earth: {
+  earth: {
     N: () => 0,
     i: () => 0,
     w: (d) => 282.9404 + 4.70935e-5 * d,
@@ -265,7 +265,7 @@ const PLANETS: Record<PlanetName | "Earth", Elements> = {
   },
 };
 
-function heliocentricEcliptic(planet: PlanetName | "Earth", d: number) {
+function heliocentricEcliptic(planet: PlanetName | "earth", d: number) {
   const el = PLANETS[planet];
   const N = el.N(d) * DEG;
   const i = el.i(d) * DEG;
@@ -298,7 +298,7 @@ function heliocentricEcliptic(planet: PlanetName | "Earth", d: number) {
 export function planetPosition(planet: PlanetName, date: Date): EquatorialCoord {
   const d = dJ2000(date);
   const p = heliocentricEcliptic(planet, d);
-  const earthRaw = heliocentricEcliptic("Earth", d);
+  const earthRaw = heliocentricEcliptic("earth", d);
   // Earth's elements above describe Sun's apparent orbit; flip to get Earth's heliocentric position.
   const earth = { x: -earthRaw.x, y: -earthRaw.y, z: -earthRaw.z };
   const x = p.x - earth.x;
@@ -393,14 +393,14 @@ export function moonRiseSet(
 }
 
 const MOON_PHASES: Array<[number, string]> = [
-  [0.03, "New moon"],
-  [0.22, "Waxing crescent"],
-  [0.28, "First quarter"],
-  [0.47, "Waxing gibbous"],
-  [0.53, "Full moon"],
-  [0.72, "Waning gibbous"],
-  [0.78, "Last quarter"],
-  [0.97, "Waning crescent"],
+  [0.03, "new moon"],
+  [0.22, "waxing crescent"],
+  [0.28, "first quarter"],
+  [0.47, "waxing gibbous"],
+  [0.53, "full moon"],
+  [0.72, "waning gibbous"],
+  [0.78, "last quarter"],
+  [0.97, "waning crescent"],
 ];
 
 function phaseLabel(elong: number): string {
@@ -438,11 +438,11 @@ export function moonInfo(
 
 // Approximate apparent magnitude → visibility bucket.
 const PLANET_META: Record<PlanetName, { symbol: string; baseMag: number }> = {
-  Mercury: { symbol: "☿", baseMag: -0.4 },
-  Venus: { symbol: "♀", baseMag: -4.4 },
-  Mars: { symbol: "♂", baseMag: 0.0 },
-  Jupiter: { symbol: "♃", baseMag: -2.6 },
-  Saturn: { symbol: "♄", baseMag: 0.5 },
+  mercury: { symbol: "☿", baseMag: -0.4 },
+  venus: { symbol: "♀", baseMag: -4.4 },
+  mars: { symbol: "♂", baseMag: 0.0 },
+  jupiter: { symbol: "♃", baseMag: -2.6 },
+  saturn: { symbol: "♄", baseMag: 0.5 },
 };
 
 export function planetVisibility(

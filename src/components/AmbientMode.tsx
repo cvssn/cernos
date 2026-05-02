@@ -127,8 +127,8 @@ export default function AmbientMode({ open, onClose, theme, snapshot, place }: P
           <button
             onClick={onClose}
             className="absolute top-5 right-5 glass p-3 hover:scale-110 active:scale-95 transition z-20"
-            aria-label="Exit ambient mode"
-            title="Exit (Esc)"
+            aria-label="exit ambient mode"
+            title="exit (esc)"
           >
             <X size={18} />
           </button>
@@ -209,7 +209,7 @@ export default function AmbientMode({ open, onClose, theme, snapshot, place }: P
               <button
                 onClick={() => setMuted((m) => !m)}
                 className="hover:scale-110 active:scale-95 transition"
-                aria-label={muted ? "Unmute" : "Mute"}
+                aria-label={muted ? "unmute" : "mute"}
               >
                 {muted ? (
                   <VolumeX size={18} />
@@ -228,7 +228,7 @@ export default function AmbientMode({ open, onClose, theme, snapshot, place }: P
                   if (v > 0 && muted) setMuted(false);
                 }}
                 className="radar-range flex-1"
-                aria-label="Soundscape volume"
+                aria-label="soundscape volume"
               />
               <span className="text-sub text-xs tabular-nums w-8 text-right">
                 {muted ? 0 : Math.round(volume * 100)}

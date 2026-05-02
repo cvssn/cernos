@@ -26,13 +26,13 @@ export default function AuroraBanner({ data, isNight }: Props) {
   const kp = data.kp;
   const overhead = data.overheadPlausible;
   const headline = overhead
-    ? "Aurora possible overhead"
-    : "Aurora possible on the horizon";
+    ? "aurora possible overhead"
+    : "aurora possible on the horizon";
   const sub = isNight
     ? overhead
-      ? "Step outside — clear north sky helps."
-      : "Look low to the north (south, if you're below the equator)."
-    : "Wait for nightfall — the show needs darkness.";
+      ? "step outside — clear north sky helps."
+      : "look low to the north (south, if you're below the equator)."
+    : "wait for nightfall — the show needs darkness.";
 
   return (
     <motion.div

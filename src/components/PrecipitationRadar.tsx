@@ -279,7 +279,7 @@ export default function PrecipitationRadar({
   const subtitle = error
     ? error
     : !data
-    ? "Loading radar…"
+    ? "loading radar…"
     : frameTime
     ? `${frameTime.toLocaleTimeString([], {
         hour: "2-digit",
@@ -304,7 +304,7 @@ export default function PrecipitationRadar({
           <Radar className="accent shrink-0" size={18} strokeWidth={1.6} />
           <div className="min-w-0">
             <div className="text-main font-medium leading-tight">
-              Precipitation Radar
+              precipitation radar
             </div>
             <div className="text-sub text-xs truncate">{subtitle}</div>
           </div>
@@ -313,7 +313,7 @@ export default function PrecipitationRadar({
           <button
             onClick={() => setLightningOn((v) => !v)}
             aria-label={
-              lightningOn ? "Hide lightning strikes" : "Show lightning strikes"
+              lightningOn ? "hide lightning strikes" : "show lightning strikes"
             }
             title={
               lightningOn
@@ -324,7 +324,7 @@ export default function PrecipitationRadar({
                       ? "connecting…"
                       : "offline"
                   } · ${strikeRate}/min in view`
-                : "Show live lightning strikes (Blitzortung)"
+                : "show live lightning strikes (blitzortung)"
             }
             className={`glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition ${
               lightningOn && lightningStatus === "live" ? "ring-accent" : ""
@@ -347,18 +347,18 @@ export default function PrecipitationRadar({
             <span className="hidden sm:inline">
               {lightningOn && strikeRate > 0
                 ? `${strikeRate}/min`
-                : "Strikes"}
+                : "strikes"}
             </span>
           </button>
           <button
             onClick={() => setPlaying((p) => !p)}
-            aria-label={playing ? "Pause radar" : "Play radar"}
+            aria-label={playing ? "pause radar" : "play radar"}
             className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition"
             disabled={!data}
           >
             {playing ? <Pause size={14} /> : <Play size={14} />}
             <span className="hidden sm:inline">
-              {playing ? "Pause" : "Play"}
+              {playing ? "pause" : "play"}
             </span>
           </button>
         </div>
@@ -371,12 +371,12 @@ export default function PrecipitationRadar({
         />
         {error && (
           <div className="absolute inset-0 flex items-center justify-center text-sub text-sm bg-black/40 backdrop-blur-sm">
-            <CloudRain size={16} className="mr-2" /> Radar unavailable
+            <CloudRain size={16} className="mr-2" /> radar unavailable
           </div>
         )}
         {!data && !error && (
           <div className="absolute inset-0 flex items-center justify-center text-sub text-sm bg-black/30 backdrop-blur-sm">
-            <Radar size={16} className="mr-2 animate-pulse" /> Tuning radar…
+            <Radar size={16} className="mr-2 animate-pulse" /> tuning radar…
           </div>
         )}
       </div>
@@ -394,7 +394,7 @@ export default function PrecipitationRadar({
                 setFrameIdx(Number(e.target.value));
               }}
               className="radar-range w-full"
-              aria-label="Radar timeline"
+              aria-label="radar timeline"
             />
             <div
               className="radar-now-tick"
@@ -412,7 +412,7 @@ export default function PrecipitationRadar({
             <span>+30m</span>
           </div>
           <div className="text-sub text-[10px] text-right mt-2 opacity-70">
-            Tiles © CARTO · Radar © RainViewer · Strikes © Blitzortung.org
+            tiles © carto · radar © rainviewer · strikes © blitzortung.org
           </div>
         </div>
       )}

@@ -25,8 +25,8 @@ export default function HourlyForecast({ hourly, nowIndex, scrubIndex, onPickHou
       className="glass-strong p-5 md:p-6"
     >
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-main font-semibold">Next 24 hours</h2>
-        <span className="text-sub text-xs uppercase tracking-wider">Hourly</span>
+        <h2 className="text-main font-semibold">next 24 hours</h2>
+        <span className="text-sub text-xs uppercase tracking-wider">hourly</span>
       </div>
       <div className="flex gap-3 overflow-x-auto scrollbar-thin pb-1 -mx-1 px-1">
         {window.map((h, i) => {

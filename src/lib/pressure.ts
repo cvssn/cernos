@@ -20,13 +20,13 @@ export type PressureSummary = {
 };
 
 const TENDENCY_LABEL: Record<Tendency, string> = {
-  "rapid-fall": "Falling fast",
-  fall: "Falling",
-  "slight-fall": "Drifting down",
-  steady: "Steady",
-  "slight-rise": "Drifting up",
-  rise: "Rising",
-  "rapid-rise": "Rising fast",
+  "rapid-fall": "falling fast",
+  fall: "falling",
+  "slight-fall": "drifting down",
+  steady: "steady",
+  "slight-rise": "drifting up",
+  rise: "rising",
+  "rapid-rise": "rising fast",
 };
 
 function classify(delta3h: number): Tendency {
@@ -43,19 +43,19 @@ function classify(delta3h: number): Tendency {
 function headlineFor(t: Tendency): string {
   switch (t) {
     case "rapid-fall":
-      return "Pressure dropping fast — storm likely.";
+      return "pressure dropping fast — storm likely.";
     case "fall":
-      return "Pressure falling — weather worsening.";
+      return "pressure falling — weather worsening.";
     case "slight-fall":
-      return "Pressure easing down — change in the air.";
+      return "pressure easing down — change in the air.";
     case "steady":
-      return "Pressure steady — settled conditions.";
+      return "pressure steady — settled conditions.";
     case "slight-rise":
-      return "Pressure edging up — clearing along the way.";
+      return "pressure edging up — clearing along the way.";
     case "rise":
-      return "Pressure rising — fairer weather building.";
+      return "pressure rising — fairer weather building.";
     case "rapid-rise":
-      return "Pressure rising fast — front cleared, expect cool and breezy.";
+      return "pressure rising fast — front cleared, expect cool and breezy.";
   }
 }
 
@@ -64,19 +64,19 @@ function detailFor(t: Tendency, delta3h: number, delta24h: number): string {
   const d24 = formatDelta(delta24h);
   switch (t) {
     case "rapid-fall":
-      return `Down ${d3} in 3 h (${d24} over 24 h). A drop this steep usually precedes wind, rain, or a thunderstorm within hours — sailors should reef and secure gear.`;
+      return `down ${d3} in 3h (${d24} over 24h). c drop this steep usually precedes wind, rain, or a thunderstorm within hours — sailors should reef and secure gear.`;
     case "fall":
-      return `Down ${d3} in 3 h (${d24} over 24 h). Cloud and wind tend to follow a falling glass.`;
+      return `down ${d3} in 3h (${d24} over 24h). cloud and wind tend to follow a falling glass.`;
     case "slight-fall":
-      return `Off ${d3} in 3 h (${d24} over 24 h). Subtle, but the trend is downward.`;
+      return `off ${d3} in 3h (${d24} over 24h). subtle, but the trend is downward.`;
     case "steady":
-      return `Within ${d3} over 3 h (${d24} over 24 h). The atmosphere is in balance — what you see is what you'll get for a while.`;
+      return `within ${d3} over 3h (${d24} over 24h). the atmosphere is in balance — what you see is what you'll get for a while.`;
     case "slight-rise":
-      return `Up ${d3} in 3 h (${d24} over 24 h). Slow improvement.`;
+      return `up ${d3} in 3h (${d24} over 24h). slow improvement.`;
     case "rise":
-      return `Up ${d3} in 3 h (${d24} over 24 h). High pressure is building in.`;
+      return `up ${d3} in 3h (${d24} over 24h). high pressure is building in.`;
     case "rapid-rise":
-      return `Up ${d3} in 3 h (${d24} over 24 h). A rapid rise often follows a cold front — clearer skies, but stronger wind for a time.`;
+      return `up ${d3} in 3h (${d24} over 24h). a rapid rise often follows a cold front — clearer skies, but stronger wind for a time.`;
   }
 }
 
@@ -120,7 +120,7 @@ export function summarize(readings: PressureReading[]): PressureSummary | null {
   const swing = Math.abs(delta24h);
   const sensitiveNote =
     swing >= 5
-      ? `A ${swing.toFixed(1)} hPa swing in 24 h is the kind of shift that can trigger migraines and joint pain — go gentle if you're sensitive to weather changes.`
+      ? `a ${swing.toFixed(1)} hpa swing in 24 h is the kind of shift that can trigger migraines and joint pain — go gentle if you're sensitive to weather changes.`
       : null;
 
   return {

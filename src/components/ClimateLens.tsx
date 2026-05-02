@@ -78,7 +78,7 @@ export default function ClimateLens({
             <div className="flex-1 min-w-0">
               {loading && (
                 <div className="text-sub text-sm animate-pulse">
-                  Looking back to the 1990s…
+                  looking back to the 1990s…
                 </div>
               )}
               {error && !loading && (
@@ -135,7 +135,7 @@ function ClimateDelta({ data }: { data: ClimateLensPayload }) {
         {phrase}
       </div>
       <div className="text-sub text-[11px] uppercase tracking-wider mt-1">
-        ERA5 daily-mean baseline · {data.baselineYears.from}–
+        era5 daily-mean baseline · {data.baselineYears.from}–
         {data.baselineYears.to} · {data.baselineSampleCount} samples
       </div>
     </div>
