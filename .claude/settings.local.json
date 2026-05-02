@@ -5,7 +5,10 @@
       "Bash(npx tsc *)",
       "Bash(awk NR>=1 && NR<=80 *)",
       "Bash(awk NR>=1 && NR<=30 *)",
-      "Bash(awk NR>=30 && NR<=180 *)"
+      "Bash(awk NR>=30 && NR<=180 *)",
+      "Bash(awk NR>=80 && NR<=250 *)",
+      "Bash(awk NR>=1 && NR<=50 *)",
+      "Bash(npm install *)"
     ]
   }
 }

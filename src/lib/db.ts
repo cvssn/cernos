@@ -28,10 +28,26 @@ export type StoredJournalEntry = {
   created_at: string;
 };
 
+export type StoredRainAlarm = {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+  place: {
+    name: string;
+    country: string;
+    admin1: string | null;
+    latitude: number;
+    longitude: number;
+    timezone?: string;
+  };
+  lastFiredAt: string | null;
+  created_at: string;
+};
+
 type DbShape = {
   favorites: StoredFavorite[];
   history: StoredHistory[];
   journal: StoredJournalEntry[];
+  rainAlarms: StoredRainAlarm[];
   nextId: number;
 };
 
@@ -42,7 +58,7 @@ function ensureDir() {
 function read(): DbShape {
   ensureDir();
   if (!fs.existsSync(DB_FILE)) {
-    return { favorites: [], history: [], journal: [], nextId: 1 };
+    return { favorites: [], history: [], journal: [], rainAlarms: [], nextId: 1 };
   }
   try {
     const raw = fs.readFileSync(DB_FILE, "utf8");
@@ -51,10 +67,11 @@ function read(): DbShape {
       favorites: parsed.favorites ?? [],
       history: parsed.history ?? [],
       journal: parsed.journal ?? [],
+      rainAlarms: parsed.rainAlarms ?? [],
       nextId: parsed.nextId ?? 1,
     };
   } catch {
-    return { favorites: [], history: [], journal: [], nextId: 1 };
+    return { favorites: [], history: [], journal: [], rainAlarms: [], nextId: 1 };
   }
 }
 
@@ -156,4 +173,50 @@ export function listHistory(limit = 8) {
     if (!byKey.has(key)) byKey.set(key, h);
   }
   return Array.from(byKey.values()).slice(0, limit);
+}
+
+export function listRainAlarms(): StoredRainAlarm[] {
+  return read().rainAlarms;
+}
+
+export function findRainAlarm(endpoint: string): StoredRainAlarm | undefined {
+  return read().rainAlarms.find((a) => a.endpoint === endpoint);
+}
+
+export function upsertRainAlarm(a: Omit<StoredRainAlarm, "created_at" | "lastFiredAt"> & {
+  lastFiredAt?: string | null;
+}): StoredRainAlarm {
+  const db = read();
+  const existing = db.rainAlarms.find((x) => x.endpoint === a.endpoint);
+  if (existing) {
+    existing.place = a.place;
+    existing.keys = a.keys;
+    write(db);
+    return existing;
+  }
+  const next: StoredRainAlarm = {
+    endpoint: a.endpoint,
+    keys: a.keys,
+    place: a.place,
+    lastFiredAt: a.lastFiredAt ?? null,
+    created_at: new Date().toISOString(),
+  };
+  db.rainAlarms.push(next);
+  write(db);
+  return next;
+}
+
+export function removeRainAlarm(endpoint: string): void {
+  const db = read();
+  db.rainAlarms = db.rainAlarms.filter((a) => a.endpoint !== endpoint);
+  write(db);
+}
+
+export function markRainAlarmFired(endpoint: string, at: string): void {
+  const db = read();
+  const a = db.rainAlarms.find((x) => x.endpoint === endpoint);
+  if (a) {
+    a.lastFiredAt = at;
+    write(db);
+  }
 }

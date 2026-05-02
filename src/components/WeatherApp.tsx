@@ -26,6 +26,7 @@ import AmbientMode from "./AmbientMode";
 import VoiceAsk from "./VoiceAsk";
 import ActivityMatchmaker from "./ActivityMatchmaker";
 import TripBrief from "./TripBrief";
+import RainAlarm from "./RainAlarm";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
@@ -347,6 +348,7 @@ export default function WeatherApp() {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <RainAlarm place={place} />
             <VoiceAsk weather={weather} />
             <button
               onClick={() => setTripOpen(true)}
