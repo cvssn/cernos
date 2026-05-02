@@ -41,7 +41,7 @@ function fallback(w: WeatherPayload): Suggestion[] {
 
   if (niceOut) {
     return [
-      { kind: "run", title: "go for a run", confidence: "high", reason: `mild ${Math.round(c.temperature)}°C, low rain risk` },
+      { kind: "run", title: "go for a run", confidence: "high", reason: `mild ${Math.round(c.temperature)}°c, low rain risk` },
       { kind: "picnic", title: "have a picnic", confidence: "high", reason: "dry and comfortable outside" },
       { kind: "cafe", title: "sit at a cafe terrace", confidence: "medium", reason: "good light, soft breeze" },
     ];
@@ -55,7 +55,7 @@ function fallback(w: WeatherPayload): Suggestion[] {
   }
   if (cold) {
     return [
-      { kind: "cafe", title: "warm up at a cafe", confidence: "high", reason: `feels ${Math.round(c.apparentTemperature)}°C outside` },
+      { kind: "cafe", title: "warm up at a cafe", confidence: "high", reason: `feels ${Math.round(c.apparentTemperature)}°c outside` },
       { kind: "movie", title: "catch a film", confidence: "medium", reason: "too chilly to linger outdoors" },
       { kind: "walk", title: "brisk walk if bundled", confidence: "low", reason: "doable with layers" },
     ];
@@ -102,18 +102,18 @@ export async function POST(req: NextRequest) {
       })
       .join("\n");
 
-    const summary = `Location: ${w.place.name}${w.place.admin1 ? ", " + w.place.admin1 : ""}${w.place.country ? ", " + w.place.country : ""}
-Local time now: ${w.current.time.slice(11, 16)}
-Now: ${Math.round(w.current.temperature)}°C feels ${Math.round(w.current.apparentTemperature)}°C, ${cond.label}, humidity ${w.current.humidity}%, wind ${Math.round(w.current.windSpeed)} km/h, UV ${w.current.uvIndex}, ${w.current.isDay ? "daytime" : "after dark"}
-Next 4 hours:
+    const summary = `location: ${w.place.name}${w.place.admin1 ? ", " + w.place.admin1 : ""}${w.place.country ? ", " + w.place.country : ""}
+local time now: ${w.current.time.slice(11, 16)}
+now: ${Math.round(w.current.temperature)}°c feels ${Math.round(w.current.apparentTemperature)}°c, ${cond.label}, humidity ${w.current.humidity}%, wind ${Math.round(w.current.windSpeed)} km/h, uv ${w.current.uvIndex}, ${w.current.isDay ? "daytime" : "after dark"}
+next 4 hours:
 ${arc}`;
 
     const msg = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 380,
-      system: `You are an activity matchmaker. Given the next 4 hours of weather, recommend exactly 3 distinct activities the user could do. Mix at least one outdoor and one indoor option unless the weather strongly favors one side. Return ONLY a JSON object, no prose, no markdown, no code fence:
-{"suggestions":[{"kind":"<one of: ${ALLOWED_KINDS.join("|")}>","title":"<short verb phrase, lowercase, max 5 words>","confidence":"high|medium|low","reason":"<≤10 words, cites a specific weather fact like temp, rain%, wind, UV, or daylight>"}]}
-Confidence rules: high = weather clearly supports it; medium = workable with caveats; low = possible but not ideal. Never repeat the same kind twice. Titles stay lowercase, no punctuation at the end.`,
+      system: `you are an activity matchmaker. given the next 4 hours of weather, recommend exactly 3 distinct activities the user could do. mix at least one outdoor and one indoor option unless the weather strongly favors one side. return only a json object, no prose, no markdown, no code fence:
+{"suggestions":[{"kind":"<one of: ${ALLOWED_KINDS.join("|")}>","title":"<short verb phrase, lowercase, max 5 words>","confidence":"high|medium|low","reason":"<≤10 words, cites a specific weather fact like temp, rain%, wind, uv, or daylight>"}]}
+confidence rules: high = weather clearly supports it; medium = workable with caveats; low = possible but not ideal. Never repeat the same kind twice. titles stay lowercase, no punctuation at the end.`,
       messages: [{ role: "user", content: summary }],
     });
 

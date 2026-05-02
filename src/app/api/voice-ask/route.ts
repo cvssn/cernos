@@ -49,23 +49,23 @@ export async function POST(req: NextRequest) {
 
     const today = w.daily[0];
     const tomorrow = w.daily[1];
-    const summary = `Location: ${w.place.name}${w.place.admin1 ? ", " + w.place.admin1 : ""}${w.place.country ? ", " + w.place.country : ""}
-Current local time: ${w.current.time}
-Now: ${Math.round(w.current.temperature)}°C feels ${Math.round(w.current.apparentTemperature)}°C, ${cond.label}, humidity ${w.current.humidity}%, wind ${Math.round(w.current.windSpeed)} km/h, UV ${w.current.uvIndex}
-Today: high ${Math.round(today?.temperatureMax ?? 0)}°C / low ${Math.round(today?.temperatureMin ?? 0)}°C, ${today?.precipitationProbabilityMax ?? 0}% max rain chance, sunset ${today?.sunset?.slice(11, 16) ?? "n/a"}
-Tomorrow: high ${Math.round(tomorrow?.temperatureMax ?? 0)}°C / low ${Math.round(tomorrow?.temperatureMin ?? 0)}°C, ${tomorrow?.precipitationProbabilityMax ?? 0}% max rain chance
-Hourly arc:
+    const summary = `location: ${w.place.name}${w.place.admin1 ? ", " + w.place.admin1 : ""}${w.place.country ? ", " + w.place.country : ""}
+current local time: ${w.current.time}
+now: ${Math.round(w.current.temperature)}°c feels ${Math.round(w.current.apparentTemperature)}°c, ${cond.label}, humidity ${w.current.humidity}%, wind ${Math.round(w.current.windSpeed)} km/h, UV ${w.current.uvIndex}
+today: high ${Math.round(today?.temperatureMax ?? 0)}°c / low ${Math.round(today?.temperatureMin ?? 0)}°c, ${today?.precipitationProbabilityMax ?? 0}% max rain chance, sunset ${today?.sunset?.slice(11, 16) ?? "n/a"}
+tomorrow: high ${Math.round(tomorrow?.temperatureMax ?? 0)}°c / low ${Math.round(tomorrow?.temperatureMin ?? 0)}°c, ${tomorrow?.precipitationProbabilityMax ?? 0}% max rain chance
+hourly arc:
 ${arc}`;
 
     const msg = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 180,
       system:
-        "You are a concise spoken weather assistant. The user asks a question by voice and your reply will be spoken aloud by a text-to-speech engine. Answer in 1-2 short sentences, plain conversational English, no markdown, no bullets, no lists, no quotation marks, no emojis. Round temperatures to whole degrees and include the °C symbol when stating values. If the question references a specific time (e.g. 'at 8'), interpret it against the local time provided and the hourly arc, picking the closest hour. If the question is ambiguous, give a direct best-guess answer rather than asking for clarification. Be specific and useful — recommend 'yes bring a jacket' or 'no, you'll be fine' style answers when asked. Never invent data not in the weather context. If the weather context cannot answer the question, say so briefly.",
+        "you are a concise spoken weather assistant. The user asks a question by voice and your reply will be spoken aloud by a text-to-speech engine. answer in 1-2 short sentences, plain conversational english, no markdown, no bullets, no lists, no quotation marks, no emojis. Round temperatures to whole degrees and include the °c symbol when stating values. if the question references a specific time (e.g. 'at 8'), interpret it against the local time provided and the hourly arc, picking the closest hour. if the question is ambiguous, give a direct best-guess answer rather than asking for clarification. be specific and useful — recommend 'yes bring a jacket' or 'no, you'll be fine' style answers when asked. never invent data not in the weather context. if the weather context cannot answer the question, say so briefly.",
       messages: [
         {
           role: "user",
-          content: `Weather context:\n${summary}\n\nUser question: ${question}`,
+          content: `weather context:\n${summary}\n\nuser question: ${question}`,
         },
       ],
     });
@@ -79,7 +79,7 @@ ${arc}`;
       .trim();
 
     return NextResponse.json({
-      answer: text || "I couldn't come up with an answer for that.",
+      answer: text || "i couldn't come up with an answer for that.",
     });
   } catch (err) {
     console.error("voice-ask error", err);
