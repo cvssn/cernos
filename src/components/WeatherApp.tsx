@@ -18,6 +18,7 @@ import PollenPanel from "./PollenPanel";
 import TonightsSkyPanel from "./TonightsSkyPanel";
 import PressureTendency from "./PressureTendency";
 import ClimateLens from "./ClimateLens";
+import SkyTimelapse from "./SkyTimelapse";
 import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
 
@@ -403,6 +404,11 @@ export default function WeatherApp() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
+                <SkyTimelapse
+                  hourly={weather.hourly}
+                  nowIndex={weather.nowIndex}
+                  daily={weather.daily}
+                />
                 <ClimateLens
                   enabled={climateLensOn}
                   latitude={place.latitude}
