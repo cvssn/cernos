@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cernos — Living Weather",
+  title: "cernos",
   description:
-    "A dynamic weather app whose entire interface morphs to match the sky. Forecasts, air quality, and AI-powered insights.",
+    "a dynamic weather app whose entire interface morphs to match the sky. forecasts, air quality, and ai-powered insights.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
