@@ -12,15 +12,6 @@
   ],
   "history": [
     {
-      "id": 29,
-      "name": "Singapore",
-      "country": "Singapore",
-      "admin1": null,
-      "latitude": 1.3521,
-      "longitude": 103.8198,
-      "created_at": "2026-04-29T17:22:13.071Z"
-    },
-    {
       "id": 30,
       "name": "Dubai",
       "country": "UAE",
@@ -235,6 +226,15 @@
       "latitude": 51.5074,
       "longitude": -0.1278,
       "created_at": "2026-05-02T17:57:38.156Z"
+    },
+    {
+      "id": 54,
+      "name": "London",
+      "country": "United Kingdom",
+      "admin1": "England",
+      "latitude": 51.5074,
+      "longitude": -0.1278,
+      "created_at": "2026-05-02T18:05:24.516Z"
     }
   ],
   "journal": [
@@ -261,5 +261,5 @@
       "created_at": "2026-05-02T01:56:12.536Z"
     }
   ],
-  "nextId": 54
+  "nextId": 55
 }

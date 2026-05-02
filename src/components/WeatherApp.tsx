@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cloud, AlertCircle, Loader2, RefreshCw, Radar, Headphones, Thermometer } from "lucide-react";
+import { Cloud, AlertCircle, Loader2, RefreshCw, Radar, Headphones, Thermometer, Briefcase } from "lucide-react";
 import SearchBar from "./SearchBar";
 import CurrentWeather from "./CurrentWeather";
 import HourlyForecast from "./HourlyForecast";
@@ -25,6 +25,7 @@ import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
 import AmbientMode from "./AmbientMode";
 import VoiceAsk from "./VoiceAsk";
 import ActivityMatchmaker from "./ActivityMatchmaker";
+import TripBrief from "./TripBrief";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
@@ -73,6 +74,7 @@ export default function WeatherApp() {
   const [ambientOpen, setAmbientOpen] = useState(false);
   const [spaceWeather, setSpaceWeather] = useState<SpaceWeather | null>(null);
   const [climateLensOn, setClimateLensOn] = useState(false);
+  const [tripOpen, setTripOpen] = useState(false);
   const [journalEntries, setJournalEntries] = useState<StoredJournalEntry[]>(
     []
   );
@@ -347,6 +349,15 @@ export default function WeatherApp() {
           <div className="flex items-center gap-2">
             <VoiceAsk weather={weather} />
             <button
+              onClick={() => setTripOpen(true)}
+              className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition"
+              aria-label="Plan a trip"
+              title="Trip brief — packing list for any destination"
+            >
+              <Briefcase size={14} className="text-white" />
+              <span className="hidden sm:inline">trip</span>
+            </button>
+            <button
               onClick={() => setClimateLensOn((v) => !v)}
               disabled={!weather}
               className={`glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed ${
@@ -530,6 +541,8 @@ export default function WeatherApp() {
         snapshot={snapshot}
         place={place}
       />
+
+      <TripBrief open={tripOpen} onClose={() => setTripOpen(false)} />
     </>
   );
 }
