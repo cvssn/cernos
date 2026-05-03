@@ -8,7 +8,8 @@
       "Bash(awk NR>=30 && NR<=180 *)",
       "Bash(awk NR>=80 && NR<=250 *)",
       "Bash(awk NR>=1 && NR<=50 *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "mcp__plugin_claude-mem_mcp-search__smart_outline"
     ]
   }
 }

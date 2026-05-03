@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
-import { Cloud, AlertCircle, Loader2, RefreshCw, Radar, Headphones, Thermometer, Briefcase } from "lucide-react";
+import { Cloud, AlertCircle, Loader2, RefreshCw, Radar, Headphones, Thermometer, Briefcase, Share2 } from "lucide-react";
 import SearchBar from "./SearchBar";
 import CurrentWeather from "./CurrentWeather";
 import HourlyForecast from "./HourlyForecast";
@@ -27,6 +27,7 @@ import VoiceAsk from "./VoiceAsk";
 import ActivityMatchmaker from "./ActivityMatchmaker";
 import TripBrief from "./TripBrief";
 import RainAlarm from "./RainAlarm";
+import SharePoster from "./SharePoster";
 
 const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
@@ -76,6 +77,7 @@ export default function WeatherApp() {
   const [spaceWeather, setSpaceWeather] = useState<SpaceWeather | null>(null);
   const [climateLensOn, setClimateLensOn] = useState(false);
   const [tripOpen, setTripOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [journalEntries, setJournalEntries] = useState<StoredJournalEntry[]>(
     []
   );
@@ -360,6 +362,16 @@ export default function WeatherApp() {
               <span className="hidden sm:inline">trip</span>
             </button>
             <button
+              onClick={() => setShareOpen(true)}
+              disabled={!weather}
+              className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Share today's sky"
+              title="Share today's sky — downloadable poster"
+            >
+              <Share2 size={14} className="text-white" />
+              <span className="hidden sm:inline">share</span>
+            </button>
+            <button
               onClick={() => setClimateLensOn((v) => !v)}
               disabled={!weather}
               className={`glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed ${
@@ -545,6 +557,11 @@ export default function WeatherApp() {
       />
 
       <TripBrief open={tripOpen} onClose={() => setTripOpen(false)} />
+      <SharePoster
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        place={place}
+      />
     </>
   );
 }
