@@ -12,60 +12,6 @@
   ],
   "history": [
     {
-      "id": 33,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-04-30T12:30:23.036Z"
-    },
-    {
-      "id": 34,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-04-30T12:30:33.332Z"
-    },
-    {
-      "id": 35,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-04-30T12:33:14.910Z"
-    },
-    {
-      "id": 36,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-04-30T12:34:51.278Z"
-    },
-    {
-      "id": 37,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-04-30T12:43:32.949Z"
-    },
-    {
-      "id": 38,
-      "name": "London",
-      "country": "UK",
-      "admin1": null,
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-04-30T20:26:51.450Z"
-    },
-    {
       "id": 39,
       "name": "London",
       "country": "United Kingdom",
@@ -235,6 +181,60 @@
       "latitude": 51.5074,
       "longitude": -0.1278,
       "created_at": "2026-05-03T00:51:48.656Z"
+    },
+    {
+      "id": 58,
+      "name": "Tokyo",
+      "country": "Japan",
+      "admin1": "Tokyo",
+      "latitude": 35.6895,
+      "longitude": 139.69171,
+      "created_at": "2026-05-03T00:57:03.663Z"
+    },
+    {
+      "id": 59,
+      "name": "London",
+      "country": "United Kingdom",
+      "admin1": "England",
+      "latitude": 51.5074,
+      "longitude": -0.1278,
+      "created_at": "2026-05-03T00:57:16.600Z"
+    },
+    {
+      "id": 60,
+      "name": "London",
+      "country": "United Kingdom",
+      "admin1": "England",
+      "latitude": 51.5074,
+      "longitude": -0.1278,
+      "created_at": "2026-05-03T00:57:17.115Z"
+    },
+    {
+      "id": 61,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5475,
+      "longitude": -46.63611,
+      "created_at": "2026-05-03T00:57:45.885Z"
+    },
+    {
+      "id": 62,
+      "name": "London",
+      "country": "United Kingdom",
+      "admin1": "England",
+      "latitude": 51.5074,
+      "longitude": -0.1278,
+      "created_at": "2026-05-03T00:57:59.777Z"
+    },
+    {
+      "id": 63,
+      "name": "London",
+      "country": "United Kingdom",
+      "admin1": "England",
+      "latitude": 51.5074,
+      "longitude": -0.1278,
+      "created_at": "2026-05-03T00:58:00.188Z"
     }
   ],
   "journal": [
@@ -273,5 +273,5 @@
     }
   ],
   "rainAlarms": [],
-  "nextId": 58
+  "nextId": 64
 }

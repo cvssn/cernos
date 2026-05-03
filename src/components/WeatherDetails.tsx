@@ -16,68 +16,68 @@ export default function WeatherDetails({ weather, snapshot }: Props) {
     aqi == null
       ? null
       : aqi <= 20
-      ? "Good"
+      ? "good"
       : aqi <= 40
-      ? "Fair"
+      ? "fair"
       : aqi <= 60
-      ? "Moderate"
+      ? "moderate"
       : aqi <= 80
-      ? "Poor"
-      : "Very poor";
+      ? "poor"
+      : "very poor";
   const uvLabel =
     snapshot.uvIndex == null
       ? "—"
       : snapshot.uvIndex < 3
-      ? "Low"
+      ? "low"
       : snapshot.uvIndex < 6
-      ? "Moderate"
+      ? "moderate"
       : snapshot.uvIndex < 8
-      ? "High"
+      ? "high"
       : snapshot.uvIndex < 11
-      ? "Very high"
-      : "Extreme";
+      ? "very high"
+      : "extreme";
 
   const items = [
     {
       icon: <Wind size={18} />,
-      label: "Wind",
+      label: "wind",
       value: `${Math.round(snapshot.windSpeed)} km/h`,
       hint: directionLabel(snapshot.windDirection),
     },
     {
       icon: <Droplets size={18} />,
-      label: "Humidity",
+      label: "humidity",
       value: `${snapshot.humidity}%`,
       hint:
-        snapshot.humidity > 70 ? "Humid" : snapshot.humidity < 30 ? "Dry" : "Comfortable",
+        snapshot.humidity > 70 ? "humid" : snapshot.humidity < 30 ? "dry" : "comfortable",
     },
     {
       icon: <Gauge size={18} />,
-      label: "Pressure",
-      value: `${Math.round(snapshot.pressure)} hPa`,
+      label: "pressure",
+      value: `${Math.round(snapshot.pressure)} hpa`,
       hint:
-        snapshot.pressure < 1000 ? "Low" : snapshot.pressure > 1020 ? "High" : "Steady",
+        snapshot.pressure < 1000 ? "low" : snapshot.pressure > 1020 ? "high" : "steady",
     },
     {
       icon: <SunMedium size={18} />,
-      label: "UV index",
+      label: "uv index",
       value: snapshot.uvIndex != null ? Math.round(snapshot.uvIndex).toString() : "—",
       hint: uvLabel,
     },
     {
       icon: <Eye size={18} />,
-      label: "Cloud cover",
+      label: "cloud cover",
       value: `${snapshot.cloudCover}%`,
       hint:
         snapshot.cloudCover < 25
-          ? "Clear"
+          ? "clear"
           : snapshot.cloudCover < 70
-          ? "Partly cloudy"
-          : "Overcast",
+          ? "partly cloudy"
+          : "overcast",
     },
     {
       icon: <Leaf size={18} />,
-      label: "Air quality",
+      label: "air quality",
       value: aqi != null ? Math.round(aqi).toString() : "—",
       hint: aqiLabel ?? "—",
     },
