@@ -12,60 +12,6 @@
   ],
   "history": [
     {
-      "id": 52,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-02T02:11:28.234Z"
-    },
-    {
-      "id": 53,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-02T17:57:38.156Z"
-    },
-    {
-      "id": 54,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-02T18:05:24.516Z"
-    },
-    {
-      "id": 55,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-02T18:17:32.452Z"
-    },
-    {
-      "id": 56,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-02T18:17:36.644Z"
-    },
-    {
-      "id": 57,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-03T00:51:48.656Z"
-    },
-    {
       "id": 58,
       "name": "Tokyo",
       "country": "Japan",
@@ -235,6 +181,60 @@
       "latitude": -23.5505,
       "longitude": -46.6333,
       "created_at": "2026-05-03T15:35:09.416Z"
+    },
+    {
+      "id": 77,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-03T20:12:04.621Z"
+    },
+    {
+      "id": 78,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-03T20:12:04.642Z"
+    },
+    {
+      "id": 79,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-03T20:21:40.513Z"
+    },
+    {
+      "id": 80,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-03T20:21:40.535Z"
+    },
+    {
+      "id": 81,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-03T20:24:27.549Z"
+    },
+    {
+      "id": 82,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-03T20:24:27.689Z"
     }
   ],
   "journal": [
@@ -273,5 +273,5 @@
     }
   ],
   "rainAlarms": [],
-  "nextId": 77
+  "nextId": 83
 }

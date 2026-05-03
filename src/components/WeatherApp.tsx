@@ -504,49 +504,45 @@ export default function WeatherApp() {
                   onChange={setScrubIndex}
                   onScrubStateChange={setScrubbing}
                 />
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-                  <div className="lg:col-span-2 space-y-4 md:space-y-6">
-                    <HourlyForecast
-                      hourly={weather.hourly}
-                      nowIndex={weather.nowIndex}
-                      scrubIndex={scrubIndex}
-                      onPickHour={setScrubIndex}
-                    />
-                    <DailyForecast
-                      daily={weather.daily}
-                      hourly={weather.hourly}
-                      scrubIndex={scrubIndex}
-                      onPickDay={setScrubIndex}
-                    />
-                  </div>
-                  <div className="space-y-4 md:space-y-6">
-                    <AIInsights
-                      narrative={displayNarrative}
-                      loading={aiLoading && isAtNow}
-                      source={aiSource}
-                      scrubbing={!isAtNow}
-                      lang={isAtNow ? locale : "en"}
-                    />
-                    <ActivityMatchmaker
-                      weather={isAtNow ? weather : null}
-                      scrubbing={!isAtNow}
-                    />
-                    <WeatherDetails weather={weather} snapshot={snapshot} />
-                    <PressureTendency
-                      latitude={place.latitude}
-                      longitude={place.longitude}
-                      timezone={place.timezone}
-                    />
-                    <PollenPanel pollen={weather.pollen} />
-                    <TonightsSkyPanel
-                      latitude={place.latitude}
-                      longitude={place.longitude}
-                    />
-                    <SkyJournal
-                      entries={journalEntries}
-                      todayDate={journalToday}
-                    />
-                  </div>
+                <div className="columns-1 lg:columns-2 gap-4 lg:gap-6 [&>*]:break-inside-avoid [&>*]:mb-4 lg:[&>*]:mb-6">
+                  <HourlyForecast
+                    hourly={weather.hourly}
+                    nowIndex={weather.nowIndex}
+                    scrubIndex={scrubIndex}
+                    onPickHour={setScrubIndex}
+                  />
+                  <AIInsights
+                    narrative={displayNarrative}
+                    loading={aiLoading && isAtNow}
+                    source={aiSource}
+                    scrubbing={!isAtNow}
+                    lang={isAtNow ? locale : "en"}
+                  />
+                  <DailyForecast
+                    daily={weather.daily}
+                    hourly={weather.hourly}
+                    scrubIndex={scrubIndex}
+                    onPickDay={setScrubIndex}
+                  />
+                  <ActivityMatchmaker
+                    weather={isAtNow ? weather : null}
+                    scrubbing={!isAtNow}
+                  />
+                  <WeatherDetails weather={weather} snapshot={snapshot} />
+                  <PressureTendency
+                    latitude={place.latitude}
+                    longitude={place.longitude}
+                    timezone={place.timezone}
+                  />
+                  <PollenPanel pollen={weather.pollen} />
+                  <TonightsSkyPanel
+                    latitude={place.latitude}
+                    longitude={place.longitude}
+                  />
+                  <SkyJournal
+                    entries={journalEntries}
+                    todayDate={journalToday}
+                  />
                 </div>
               </motion.div>
             ) : null}
