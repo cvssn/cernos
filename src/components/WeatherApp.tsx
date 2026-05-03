@@ -52,13 +52,13 @@ import type {
 } from "@/lib/types";
 
 const DEFAULT_PLACE: Place = {
-  id: 2643743,
-  name: "London",
-  country: "United Kingdom",
-  admin1: "England",
-  latitude: 51.5074,
-  longitude: -0.1278,
-  timezone: "Europe/London",
+  id: 3448439,
+  name: "São Paulo",
+  country: "Brazil",
+  admin1: "São Paulo",
+  latitude: -23.5505,
+  longitude: -46.6333,
+  timezone: "America/Sao_Paulo",
 };
 
 export default function WeatherApp() {
