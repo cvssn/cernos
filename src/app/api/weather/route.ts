@@ -4,6 +4,7 @@ import type {
   AlertSeverity,
   DailyEntry,
   HistoricalContext,
+  PollenDailyEntry,
   PollenLevels,
   Snapshot,
   WeatherAlert,
@@ -104,6 +105,18 @@ export async function GET(req: NextRequest) {
       "ragweed_pollen",
     ].join(",")
   );
+  aqUrl.searchParams.set(
+    "hourly",
+    [
+      "alder_pollen",
+      "birch_pollen",
+      "grass_pollen",
+      "mugwort_pollen",
+      "olive_pollen",
+      "ragweed_pollen",
+    ].join(",")
+  );
+  aqUrl.searchParams.set("forecast_days", "7");
   aqUrl.searchParams.set("timezone", timezone);
   let airQuality;
   let pollen: PollenLevels | undefined;
@@ -126,7 +139,8 @@ export async function GET(req: NextRequest) {
         p.mugwort_pollen != null ||
         p.olive_pollen != null ||
         p.ragweed_pollen != null;
-      if (hasAny) {
+      const daily = aggregatePollenDaily(ad?.hourly);
+      if (hasAny || daily.length) {
         pollen = {
           alder: numOrNull(p.alder_pollen),
           birch: numOrNull(p.birch_pollen),
@@ -134,6 +148,7 @@ export async function GET(req: NextRequest) {
           mugwort: numOrNull(p.mugwort_pollen),
           olive: numOrNull(p.olive_pollen),
           ragweed: numOrNull(p.ragweed_pollen),
+          daily: daily.length ? daily : undefined,
         };
       }
     }
@@ -329,6 +344,49 @@ async function fetchHistoricalContext(
 
 function numOrNull(v: unknown): number | null {
   return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+const POLLEN_TYPES = [
+  "alder",
+  "birch",
+  "grass",
+  "mugwort",
+  "olive",
+  "ragweed",
+] as const;
+
+function aggregatePollenDaily(
+  hourly: Record<string, unknown> | undefined
+): PollenDailyEntry[] {
+  if (!hourly) return [];
+  const times = (hourly.time as string[] | undefined) ?? [];
+  if (!times.length) return [];
+  const map = new Map<string, PollenDailyEntry>();
+  for (let i = 0; i < times.length; i++) {
+    const date = times[i]?.slice(0, 10);
+    if (!date) continue;
+    let entry = map.get(date);
+    if (!entry) {
+      entry = {
+        date,
+        alder: null,
+        birch: null,
+        grass: null,
+        mugwort: null,
+        olive: null,
+        ragweed: null,
+      };
+      map.set(date, entry);
+    }
+    for (const t of POLLEN_TYPES) {
+      const arr = hourly[`${t}_pollen`] as Array<number | null> | undefined;
+      const v = arr?.[i];
+      if (typeof v === "number" && Number.isFinite(v)) {
+        entry[t] = entry[t] == null ? v : Math.max(entry[t]!, v);
+      }
+    }
+  }
+  return Array.from(map.values()).slice(0, 7);
 }
 
 // Open-Meteo has no first-party severe-weather alerts endpoint, so we derive

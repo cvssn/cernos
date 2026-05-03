@@ -47,6 +47,16 @@ export type AirQuality = {
   usAqi?: number;
 };
 
+export type PollenDailyEntry = {
+  date: string;
+  alder: number | null;
+  birch: number | null;
+  grass: number | null;
+  mugwort: number | null;
+  olive: number | null;
+  ragweed: number | null;
+};
+
 export type PollenLevels = {
   alder: number | null;
   birch: number | null;
@@ -54,6 +64,7 @@ export type PollenLevels = {
   mugwort: number | null;
   olive: number | null;
   ragweed: number | null;
+  daily?: PollenDailyEntry[];
 };
 
 export type AlertSeverity = "watch" | "advisory" | "warning";
