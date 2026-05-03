@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Wind, Droplets, Eye, Gauge, SunMedium, Leaf } from "lucide-react";
+import { Droplets, Eye, Gauge, SunMedium, Leaf } from "lucide-react";
 import SunArc from "./SunArc";
+import WindCompass from "./WindCompass";
 import type { Snapshot, WeatherPayload } from "@/lib/types";
 
 type Props = { weather: WeatherPayload; snapshot: Snapshot };
@@ -38,12 +39,6 @@ export default function WeatherDetails({ weather, snapshot }: Props) {
       : "extreme";
 
   const items = [
-    {
-      icon: <Wind size={18} />,
-      label: "wind",
-      value: `${Math.round(snapshot.windSpeed)} km/h`,
-      hint: directionLabel(snapshot.windDirection),
-    },
     {
       icon: <Droplets size={18} />,
       label: "humidity",
@@ -86,6 +81,10 @@ export default function WeatherDetails({ weather, snapshot }: Props) {
   return (
     <div className="space-y-3">
       <SunArc day={day} nowTime={snapshot.time} />
+      <WindCompass
+        speed={snapshot.windSpeed}
+        direction={snapshot.windDirection}
+      />
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -109,7 +108,3 @@ export default function WeatherDetails({ weather, snapshot }: Props) {
   );
 }
 
-function directionLabel(deg: number) {
-  const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  return dirs[Math.round((deg % 360) / 45) % 8];
-}

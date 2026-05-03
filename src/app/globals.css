@@ -476,3 +476,26 @@ body.aurora .aurora-veil {
 body.aurora .theme-bg {
   filter: hue-rotate(-12deg) saturate(1.05);
 }
+
+@keyframes wind-particle-flow {
+  0% {
+    transform: translate(-50%, 46px) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--wp-opacity, 0.7);
+  }
+  85% {
+    opacity: var(--wp-opacity, 0.7);
+  }
+  100% {
+    transform: translate(-50%, -82px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.wind-particle {
+  animation: wind-particle-flow linear infinite;
+  will-change: transform, opacity;
+  transform: translate(-50%, 0);
+}
