@@ -41,6 +41,7 @@ import { paletteFor } from "@/lib/weather-themes";
 import { themeForCondition } from "@/lib/weather-codes";
 import { buildHeuristicNarrative } from "@/lib/insights";
 import { getBrowserLocale } from "@/lib/locale";
+import { useDynamicFavicon } from "@/lib/useDynamicFavicon";
 import type {
   FavoriteRow,
   HistoryRow,
@@ -89,6 +90,8 @@ export default function WeatherApp() {
   useEffect(() => {
     setLocale(getBrowserLocale());
   }, []);
+
+  useDynamicFavicon(theme);
 
   const snapshot: Snapshot | null = useMemo(() => {
     if (!weather) return null;
