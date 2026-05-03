@@ -41,6 +41,7 @@ const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
 import { paletteFor } from "@/lib/weather-themes";
 import { themeForCondition } from "@/lib/weather-codes";
 import { buildHeuristicNarrative } from "@/lib/insights";
+import { getBrowserLocale } from "@/lib/locale";
 import type {
   FavoriteRow,
   HistoryRow,
@@ -83,7 +84,12 @@ export default function WeatherApp() {
     []
   );
   const [journalToday, setJournalToday] = useState<string | null>(null);
+  const [locale, setLocale] = useState<string>("en");
   const aiCtrl = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    setLocale(getBrowserLocale());
+  }, []);
 
   const snapshot: Snapshot | null = useMemo(() => {
     if (!weather) return null;
@@ -179,7 +185,7 @@ export default function WeatherApp() {
         fetch("/api/ai-insights", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ weather: data }),
+          body: JSON.stringify({ weather: data, locale: getBrowserLocale() }),
           signal: aiCtrl.current.signal,
         })
           .then((r) => r.json())
@@ -525,6 +531,7 @@ export default function WeatherApp() {
                       loading={aiLoading && isAtNow}
                       source={aiSource}
                       scrubbing={!isAtNow}
+                      lang={isAtNow ? locale : "en"}
                     />
                     <ActivityMatchmaker
                       weather={isAtNow ? weather : null}

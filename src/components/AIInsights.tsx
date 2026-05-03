@@ -9,6 +9,7 @@ type Props = {
   loading: boolean;
   source: "claude" | "heuristic" | null;
   scrubbing: boolean;
+  lang?: string;
 };
 
 export default function AIInsights({
@@ -16,6 +17,7 @@ export default function AIInsights({
   loading,
   source,
   scrubbing,
+  lang = "en",
 }: Props) {
   const [speechSupported, setSpeechSupported] = useState(false);
   const [speaking, setSpeaking] = useState(false);
@@ -55,12 +57,20 @@ export default function AIInsights({
     const u = new SpeechSynthesisUtterance(narrative);
     u.rate = 1.0;
     u.pitch = 1.05;
+    u.lang = lang;
+    const voices = synth.getVoices();
+    const match =
+      voices.find((v) => v.lang.toLowerCase() === lang.toLowerCase()) ??
+      voices.find((v) =>
+        v.lang.toLowerCase().startsWith(lang.split("-")[0].toLowerCase())
+      );
+    if (match) u.voice = match;
     u.onend = () => setSpeaking(false);
     u.onerror = () => setSpeaking(false);
     utterRef.current = u;
     synth.speak(u);
     setSpeaking(true);
-  }, [narrative, speaking]);
+  }, [narrative, speaking, lang]);
 
   return (
     <motion.div
@@ -120,6 +130,7 @@ export default function AIInsights({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
+            lang={lang}
             className="text-main text-[15px] md:text-base leading-relaxed"
           >
             {narrative}
