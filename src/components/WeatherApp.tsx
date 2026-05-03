@@ -11,6 +11,7 @@ import DailyForecast from "./DailyForecast";
 import WeatherDetails from "./WeatherDetails";
 import AIInsights from "./AIInsights";
 import Favorites from "./Favorites";
+import MultiCityTiles from "./MultiCityTiles";
 import AnimatedBackground from "./AnimatedBackground";
 import TimeScrubber from "./TimeScrubber";
 import WeatherAlerts from "./WeatherAlerts";
@@ -417,8 +418,16 @@ export default function WeatherApp() {
             geolocating={geolocating}
           />
 
-          <Favorites
+          <MultiCityTiles
             favorites={favorites}
+            activeLat={place.latitude}
+            activeLon={place.longitude}
+            onSelect={handleSelect}
+            onRemove={removeFavorite}
+          />
+
+          <Favorites
+            favorites={[]}
             history={history}
             onSelect={handleSelect}
             onRemove={removeFavorite}
