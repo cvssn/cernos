@@ -12,24 +12,6 @@
   ],
   "history": [
     {
-      "id": 50,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-02T01:57:51.213Z"
-    },
-    {
-      "id": 51,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-02T02:01:07.515Z"
-    },
-    {
       "id": 52,
       "name": "London",
       "country": "United Kingdom",
@@ -235,6 +217,24 @@
       "latitude": -23.5505,
       "longitude": -46.6333,
       "created_at": "2026-05-03T15:29:22.503Z"
+    },
+    {
+      "id": 75,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-03T15:35:09.402Z"
+    },
+    {
+      "id": 76,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-03T15:35:09.416Z"
     }
   ],
   "journal": [
@@ -273,5 +273,5 @@
     }
   ],
   "rainAlarms": [],
-  "nextId": 75
+  "nextId": 77
 }

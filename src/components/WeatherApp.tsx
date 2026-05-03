@@ -19,7 +19,6 @@ import PollenPanel from "./PollenPanel";
 import TonightsSkyPanel from "./TonightsSkyPanel";
 import PressureTendency from "./PressureTendency";
 import ClimateLens from "./ClimateLens";
-import SkyTimelapse from "./SkyTimelapse";
 import SkyJournal from "./SkyJournal";
 import type { StoredJournalEntry } from "@/lib/db";
 import AuroraBanner, { type SpaceWeather } from "./AuroraBanner";
@@ -34,7 +33,7 @@ const PrecipitationRadar = dynamic(() => import("./PrecipitationRadar"), {
   ssr: false,
   loading: () => (
     <div className="glass-strong h-[420px] flex items-center justify-center text-sub gap-2">
-      <Radar size={16} className="accent animate-pulse" /> Loading radar…
+      <Radar size={16} className="accent animate-pulse" /> loading radar…
     </div>
   ),
 });
@@ -149,7 +148,7 @@ export default function WeatherApp() {
         if (p.admin1) url.searchParams.set("admin1", p.admin1);
         if (p.timezone) url.searchParams.set("timezone", p.timezone);
         const r = await fetch(url);
-        if (!r.ok) throw new Error("Failed to load weather");
+        if (!r.ok) throw new Error("failed to load weather");
         const data: WeatherPayload = await r.json();
         setWeather(data);
         setScrubIndex(data.nowIndex);
@@ -196,7 +195,7 @@ export default function WeatherApp() {
           .catch(() => {})
           .finally(() => setAiLoading(false));
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Unexpected error");
+        setError(e instanceof Error ? e.message : "unexpected error");
       } finally {
         setLoading(false);
       }
@@ -232,7 +231,7 @@ export default function WeatherApp() {
 
   const handleUseLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setError("Geolocation isn't supported in this browser.");
+      setError("geolocation isn't supported in this browser.");
       return;
     }
     setGeolocating(true);
@@ -248,7 +247,7 @@ export default function WeatherApp() {
           const next: Place = top
             ? {
                 id: top.id ?? 0,
-                name: top.name ?? "Current location",
+                name: top.name ?? "current location",
                 country: top.country ?? "",
                 admin1: top.admin1,
                 latitude,
@@ -257,7 +256,7 @@ export default function WeatherApp() {
               }
             : {
                 id: 0,
-                name: "Current location",
+                name: "current location",
                 country: "",
                 latitude,
                 longitude,
@@ -267,7 +266,7 @@ export default function WeatherApp() {
         } catch {
           const next: Place = {
             id: 0,
-            name: "Current location",
+            name: "current location",
             country: "",
             latitude,
             longitude,
@@ -279,7 +278,7 @@ export default function WeatherApp() {
         }
       },
       (err) => {
-        setError(err.message || "Couldn't get your location.");
+        setError(err.message || "couldn't get your location.");
         setGeolocating(false);
       },
       { enableHighAccuracy: false, timeout: 10000 }
@@ -362,8 +361,8 @@ export default function WeatherApp() {
             <button
               onClick={() => setTripOpen(true)}
               className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition"
-              aria-label="Plan a trip"
-              title="Trip brief — packing list for any destination"
+              aria-label="plan a trip"
+              title="trip brief — packing list for any destination"
             >
               <Briefcase size={14} className="text-white" />
               <span className="hidden sm:inline">trip</span>
@@ -372,8 +371,8 @@ export default function WeatherApp() {
               onClick={() => setShareOpen(true)}
               disabled={!weather}
               className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Share today's sky"
-              title="Share today's sky — downloadable poster"
+              aria-label="share today's sky"
+              title="share today's sky — downloadable poster"
             >
               <Share2 size={14} className="text-white" />
               <span className="hidden sm:inline">share</span>
@@ -386,9 +385,9 @@ export default function WeatherApp() {
               }`}
               aria-pressed={climateLensOn}
               aria-label={
-                climateLensOn ? "Hide climate lens" : "Show climate lens"
+                climateLensOn ? "hide climate lens" : "show climate lens"
               }
-              title="Climate lens — compare today against the 1990s baseline"
+              title="climate lens — compare today against the 1990s baseline"
             >
               <Thermometer
                 size={14}
@@ -400,8 +399,8 @@ export default function WeatherApp() {
               onClick={() => setAmbientOpen(true)}
               disabled={!weather || !snapshot}
               className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Enter ambient mode"
-              title="Ambient mode — fullscreen sky + soundscape"
+              aria-label="enter ambient mode"
+              title="ambient mode — fullscreen sky + soundscape"
             >
               <Headphones size={14} className="text-white" />
               <span className="hidden sm:inline">ambient</span>
@@ -409,7 +408,7 @@ export default function WeatherApp() {
             <button
               onClick={() => fetchWeather(place)}
               className="glass px-3 py-2 text-sm flex items-center gap-2 hover:scale-[1.03] active:scale-[0.97] transition"
-              aria-label="Refresh"
+              aria-label="refresh"
             >
               <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
               <span className="hidden sm:inline">refresh</span>
@@ -472,11 +471,6 @@ export default function WeatherApp() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
-                <SkyTimelapse
-                  hourly={weather.hourly}
-                  nowIndex={weather.nowIndex}
-                  daily={weather.daily}
-                />
                 <ClimateLens
                   enabled={climateLensOn}
                   latitude={place.latitude}
