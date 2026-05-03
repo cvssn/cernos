@@ -1,7 +1,7 @@
 {
-  "name": "Cernos — Living Weather",
-  "short_name": "Cernos",
-  "description": "A living weather app whose interface morphs to match the sky. Forecasts, AI insights, and rain alarms.",
+  "name": "cernos — living weather",
+  "short_name": "cernos",
+  "description": "a living weather app whose interface morphs to match the sky. forecasts, ai insights, and rain alarms.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

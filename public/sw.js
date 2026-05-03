@@ -1,4 +1,4 @@
-// Cernos service worker — handles installability + push notifications.
+// cernos service worker — handles installability + push notifications.
 const CACHE = "cernos-shell-v1";
 const SHELL = ["/", "/manifest.webmanifest", "/icon-192.svg", "/icon-512.svg"];
 

@@ -2,6 +2,16 @@
   "name": "cernos",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "cavassani"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cvssn/cernos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cvssn/cernos/issues"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
