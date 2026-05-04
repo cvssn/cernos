@@ -80,11 +80,7 @@ export async function GET(req: NextRequest) {
   );
   url.searchParams.set("forecast_days", "7");
 
-  const r = await fetch(url, { cache: "no-store" });
-  if (!r.ok) {
-    return NextResponse.json({ error: "weather_failed" }, { status: 502 });
-  }
-  const data = await r.json();
+  const weatherFetch = fetch(url, { next: { revalidate: 60 } });
 
   const aqUrl = new URL("https://air-quality-api.open-meteo.com/v1/air-quality");
   aqUrl.searchParams.set("latitude", lat);
@@ -118,11 +114,29 @@ export async function GET(req: NextRequest) {
   );
   aqUrl.searchParams.set("forecast_days", "7");
   aqUrl.searchParams.set("timezone", timezone);
+  const aqFetch = fetch(aqUrl, { next: { revalidate: 300 } }).catch(
+    () => null
+  );
+
+  const r = await weatherFetch;
+  if (!r.ok) {
+    return NextResponse.json({ error: "weather_failed" }, { status: 502 });
+  }
+  const data = await r.json();
+
+  const currentTimeStrEarly: string = data.current?.time ?? "";
+  const historicalPromise = fetchHistoricalContext(
+    lat,
+    lon,
+    timezone,
+    currentTimeStrEarly
+  );
+
   let airQuality;
   let pollen: PollenLevels | undefined;
   try {
-    const ar = await fetch(aqUrl, { cache: "no-store" });
-    if (ar.ok) {
+    const ar = await aqFetch;
+    if (ar && ar.ok) {
       const ad = await ar.json();
       airQuality = {
         pm10: ad?.current?.pm10,
@@ -205,12 +219,7 @@ export async function GET(req: NextRequest) {
     uvIndex: data.current.uv_index,
   };
 
-  const historical = await fetchHistoricalContext(
-    lat,
-    lon,
-    timezone,
-    currentTimeStr
-  );
+  const historical = await historicalPromise;
 
   const alerts = deriveAlerts(hourlyAll, dailyEntries, nowIndex);
 

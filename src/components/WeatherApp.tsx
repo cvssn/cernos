@@ -158,11 +158,6 @@ export default function WeatherApp() {
         const data: WeatherPayload = await r.json();
         setWeather(data);
         setScrubIndex(data.nowIndex);
-        // refresh history
-        fetch("/api/history")
-          .then((r) => r.json())
-          .then((d) => setHistory(d.history ?? []))
-          .catch(() => {});
         // space weather (Kp + aurora plausibility for this lat/lon)
         fetch(`/api/space-weather?lat=${p.latitude}&lon=${p.longitude}`)
           .then((r) => r.json())

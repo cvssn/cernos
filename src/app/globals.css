@@ -21,7 +21,7 @@ body {
 }
 
 body {
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
   color: var(--text);
   background: #0b1220;
   min-height: 100vh;

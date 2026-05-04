@@ -5,7 +5,22 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: [
+          '"JetBrainsMono Nerd Font"',
+          '"JetBrains Mono"',
+          "ui-monospace",
+          "Menlo",
+          "Consolas",
+          "monospace",
+        ],
+        mono: [
+          '"JetBrainsMono Nerd Font"',
+          '"JetBrains Mono"',
+          "ui-monospace",
+          "Menlo",
+          "Consolas",
+          "monospace",
+        ],
       },
       animation: {
         "float": "float 6s ease-in-out infinite",
