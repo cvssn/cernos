@@ -12,24 +12,6 @@
   ],
   "history": [
     {
-      "id": 92,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-04T18:04:54.289Z"
-    },
-    {
-      "id": 93,
-      "name": "Current location",
-      "country": "",
-      "admin1": null,
-      "latitude": -23.9612,
-      "longitude": -46.3439,
-      "created_at": "2026-05-04T18:05:54.125Z"
-    },
-    {
       "id": 94,
       "name": "Brazil",
       "country": "Brazil",
@@ -235,6 +217,24 @@
       "latitude": -10,
       "longitude": -55,
       "created_at": "2026-05-04T19:01:10.255Z"
+    },
+    {
+      "id": 117,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-04T19:15:16.084Z"
+    },
+    {
+      "id": 118,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T19:15:16.096Z"
     }
   ],
   "journal": [
@@ -284,5 +284,5 @@
     }
   ],
   "rainAlarms": [],
-  "nextId": 117
+  "nextId": 119
 }

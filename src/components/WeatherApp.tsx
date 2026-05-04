@@ -379,9 +379,10 @@ export default function WeatherApp() {
           transform: `rotate(${gestureRotation}deg)`,
           transition: gestureRotation === 0 ? "transform 400ms ease" : "none",
           transformOrigin: "center center",
-          position: "absolute",
+          position: "fixed",
           inset: 0,
           pointerEvents: "none",
+          zIndex: 0,
         }}
       >
         <AnimatedBackground theme={theme} />
