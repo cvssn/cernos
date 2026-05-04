@@ -16,9 +16,9 @@ every gradient, particle, glass tint, audio layer, and animation reacts to the l
 
 ## why cernos?
 
-- **it morphs.** Nine themes (sunny, cloudy, rain, drizzle, thunderstorm, snow, fog, plus night variants) drive the gradient, accent color, glass tint, and particle system. the ui doesn't sit on top of the weather — it *is* the weather.
+- **it morphs.** nine themes (sunny, cloudy, rain, drizzle, thunderstorm, snow, fog, plus night variants) drive the gradient, accent color, glass tint, and particle system. the ui doesn't sit on top of the weather — it *is* the weather.
 - **it listens back.** a web audio synth generates rain, wind, thunder, birdsong, and crickets in real time. themes cross-fade audio mixes the same way they cross-fade colors. zero asset files.
-- **it travels in time.** a 7-day horizontal scrubber re-renders the entire app at any past or future hour. Theme, particles, soundscape, narrative — all of it follows.
+- **it travels in time.** a 7-day horizontal scrubber re-renders the entire app at any past or future hour. theme, particles, soundscape, narrative — all of it follows.
 - **it talks.** claude writes a personalized brief (vibe + what to wear + a practical tip). the browser reads it aloud on demand.
 - **it's free.** all weather data comes from open-meteo. no api keys required for any core feature.
 
@@ -45,7 +45,7 @@ every gradient, particle, glass tint, audio layer, and animation reacts to the l
 | **dynamic theming** | css custom properties drive every color; smooth 1.2s gradient transitions |
 | **weather particles** | Falling rain, drifting snow, lightning flashes, twinkling stars, glowing sun with rays, slow-moving clouds |
 | **glassmorphism** | frosted cards with `backdrop-filter`, layered with a subtle noise texture |
-| **framer Motion** | spring-eased entrance animations and layout transitions throughout |
+| **framer motion** | spring-eased entrance animations and layout transitions throughout |
 
 ### audio & ambient mode
 
