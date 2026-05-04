@@ -42,6 +42,7 @@ import { themeForCondition } from "@/lib/weather-codes";
 import { buildHeuristicNarrative } from "@/lib/insights";
 import { getBrowserLocale } from "@/lib/locale";
 import { useDynamicFavicon } from "@/lib/useDynamicFavicon";
+import { useHammer } from "@/lib/useHammer";
 import type {
   FavoriteRow,
   HistoryRow,
@@ -85,6 +86,8 @@ export default function WeatherApp() {
   );
   const [journalToday, setJournalToday] = useState<string | null>(null);
   const [locale, setLocale] = useState<string>("en");
+  const [gestureScale, setGestureScale] = useState(1);
+  const [gestureRotation, setGestureRotation] = useState(0);
   const aiCtrl = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -328,6 +331,43 @@ export default function WeatherApp() {
     setFavorites(d.favorites ?? []);
   }, []);
 
+  const cycleFavorite = useCallback(
+    (dir: 1 | -1) => {
+      if (favorites.length === 0) return;
+      const idx = favorites.findIndex(
+        (f) =>
+          Math.abs(f.latitude - place.latitude) < 0.01 &&
+          Math.abs(f.longitude - place.longitude) < 0.01
+      );
+      const next =
+        favorites[
+          (idx + dir + favorites.length) % favorites.length
+        ];
+      if (!next) return;
+      handleSelect({
+        id: next.id,
+        name: next.name,
+        country: next.country,
+        admin1: next.admin1 ?? undefined,
+        latitude: next.latitude,
+        longitude: next.longitude,
+      });
+    },
+    [favorites, place.latitude, place.longitude, handleSelect]
+  );
+
+  const gestureRef = useHammer<HTMLElement>({
+    onSwipeLeft: () => cycleFavorite(1),
+    onSwipeRight: () => cycleFavorite(-1),
+    onSwipeDown: () => fetchWeather(place),
+    onSwipeUp: () => setAmbientOpen((v) => !v),
+    onPinch: (s) =>
+      setGestureScale(Math.max(0.85, Math.min(1.25, s))),
+    onPinchEnd: () => setGestureScale(1),
+    onRotate: (r) => setGestureRotation(r),
+    onRotateEnd: () => setGestureRotation(0),
+  });
+
   const displayNarrative = useMemo(() => {
     if (!weather || !snapshot) return aiNarrative;
     if (isAtNow) return aiNarrative;
@@ -339,9 +379,28 @@ export default function WeatherApp() {
       <div className="theme-bg" />
       <div className="aurora-veil" />
       <div className="theme-noise" />
-      <AnimatedBackground theme={theme} />
+      <div
+        style={{
+          transform: `rotate(${gestureRotation}deg)`,
+          transition: gestureRotation === 0 ? "transform 400ms ease" : "none",
+          transformOrigin: "center center",
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+        }}
+      >
+        <AnimatedBackground theme={theme} />
+      </div>
 
-      <main className="relative z-10 min-h-screen px-4 md:px-8 py-6 md:py-10 max-w-6xl mx-auto">
+      <main
+        ref={gestureRef}
+        style={{
+          transform: `scale(${gestureScale})`,
+          transition: gestureScale === 1 ? "transform 250ms ease" : "none",
+          transformOrigin: "top center",
+          touchAction: "pan-y",
+        }}
+        className="relative z-10 min-h-screen px-4 md:px-8 py-6 md:py-10 max-w-6xl mx-auto">
         <header className="flex items-center justify-between mb-6 md:mb-8">
           <div className="flex items-center gap-2">
             <motion.div

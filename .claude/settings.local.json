@@ -10,7 +10,8 @@
       "Bash(awk NR>=1 && NR<=50 *)",
       "Bash(npm install *)",
       "mcp__plugin_claude-mem_mcp-search__smart_outline",
-      "mcp__plugin_context-mode_context-mode__ctx_execute_file"
+      "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+      "mcp__plugin_context-mode_context-mode__ctx_execute"
     ]
   }
 }

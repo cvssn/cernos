@@ -12,168 +12,6 @@
   ],
   "history": [
     {
-      "id": 64,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-03T03:48:07.013Z"
-    },
-    {
-      "id": 65,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T03:48:12.869Z"
-    },
-    {
-      "id": 66,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T03:48:14.543Z"
-    },
-    {
-      "id": 67,
-      "name": "Marília",
-      "country": "Brazil",
-      "admin1": "São Paulo",
-      "latitude": -22.21389,
-      "longitude": -49.94583,
-      "created_at": "2026-05-03T03:49:59.654Z"
-    },
-    {
-      "id": 68,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-03T14:49:05.973Z"
-    },
-    {
-      "id": 69,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T14:49:06.171Z"
-    },
-    {
-      "id": 70,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T14:49:38.191Z"
-    },
-    {
-      "id": 71,
-      "name": "London",
-      "country": "United Kingdom",
-      "admin1": "England",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "created_at": "2026-05-03T15:26:34.182Z"
-    },
-    {
-      "id": 72,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T15:26:34.220Z"
-    },
-    {
-      "id": 73,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T15:29:19.731Z"
-    },
-    {
-      "id": 74,
-      "name": "São Paulo",
-      "country": "Brazil",
-      "admin1": "São Paulo",
-      "latitude": -23.5505,
-      "longitude": -46.6333,
-      "created_at": "2026-05-03T15:29:22.503Z"
-    },
-    {
-      "id": 75,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T15:35:09.402Z"
-    },
-    {
-      "id": 76,
-      "name": "São Paulo",
-      "country": "Brazil",
-      "admin1": "São Paulo",
-      "latitude": -23.5505,
-      "longitude": -46.6333,
-      "created_at": "2026-05-03T15:35:09.416Z"
-    },
-    {
-      "id": 77,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T20:12:04.621Z"
-    },
-    {
-      "id": 78,
-      "name": "São Paulo",
-      "country": "Brazil",
-      "admin1": "São Paulo",
-      "latitude": -23.5505,
-      "longitude": -46.6333,
-      "created_at": "2026-05-03T20:12:04.642Z"
-    },
-    {
-      "id": 79,
-      "name": "São Paulo",
-      "country": "Brazil",
-      "admin1": "São Paulo",
-      "latitude": -23.5505,
-      "longitude": -46.6333,
-      "created_at": "2026-05-03T20:21:40.513Z"
-    },
-    {
-      "id": 80,
-      "name": "Brazil",
-      "country": "Brazil",
-      "admin1": null,
-      "latitude": -10,
-      "longitude": -55,
-      "created_at": "2026-05-03T20:21:40.535Z"
-    },
-    {
-      "id": 81,
-      "name": "São Paulo",
-      "country": "Brazil",
-      "admin1": "São Paulo",
-      "latitude": -23.5505,
-      "longitude": -46.6333,
-      "created_at": "2026-05-03T20:24:27.549Z"
-    },
-    {
       "id": 82,
       "name": "Brazil",
       "country": "Brazil",
@@ -235,6 +73,168 @@
       "latitude": -10,
       "longitude": -55,
       "created_at": "2026-05-03T20:30:36.072Z"
+    },
+    {
+      "id": 89,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-04T18:04:10.466Z"
+    },
+    {
+      "id": 90,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:04:10.650Z"
+    },
+    {
+      "id": 91,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-04T18:04:53.978Z"
+    },
+    {
+      "id": 92,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:04:54.289Z"
+    },
+    {
+      "id": 93,
+      "name": "Current location",
+      "country": "",
+      "admin1": null,
+      "latitude": -23.9612,
+      "longitude": -46.3439,
+      "created_at": "2026-05-04T18:05:54.125Z"
+    },
+    {
+      "id": 94,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:06:08.270Z"
+    },
+    {
+      "id": 95,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-04T18:27:52.559Z"
+    },
+    {
+      "id": 96,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:27:52.732Z"
+    },
+    {
+      "id": 97,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-04T18:41:21.551Z"
+    },
+    {
+      "id": 98,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:41:21.576Z"
+    },
+    {
+      "id": 99,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:41:40.070Z"
+    },
+    {
+      "id": 100,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:42:13.695Z"
+    },
+    {
+      "id": 101,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:42:14.133Z"
+    },
+    {
+      "id": 102,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:42:17.022Z"
+    },
+    {
+      "id": 103,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:42:20.939Z"
+    },
+    {
+      "id": 104,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:42:22.458Z"
+    },
+    {
+      "id": 105,
+      "name": "São Paulo",
+      "country": "Brazil",
+      "admin1": "São Paulo",
+      "latitude": -23.5505,
+      "longitude": -46.6333,
+      "created_at": "2026-05-04T18:42:31.136Z"
+    },
+    {
+      "id": 106,
+      "name": "Brazil",
+      "country": "Brazil",
+      "admin1": null,
+      "latitude": -10,
+      "longitude": -55,
+      "created_at": "2026-05-04T18:42:31.245Z"
     }
   ],
   "journal": [
@@ -270,8 +270,19 @@
       "tempMin": 13,
       "source": "heuristic",
       "created_at": "2026-05-03T00:51:50.189Z"
+    },
+    {
+      "date": "2026-05-04",
+      "text": "Warm light drizzle day, 25°C peak, dipping to 14°C overnight.",
+      "place": "São Paulo, São Paulo, Brazil",
+      "weatherCode": 51,
+      "isDay": true,
+      "tempMax": 25,
+      "tempMin": 14,
+      "source": "heuristic",
+      "created_at": "2026-05-04T18:04:12.440Z"
     }
   ],
   "rainAlarms": [],
-  "nextId": 89
+  "nextId": 107
 }
