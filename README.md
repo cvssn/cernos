@@ -118,18 +118,18 @@ every gradient, particle, glass tint, audio layer, animation, and even the favic
 | ai | anthropic sdk · claude haiku 4.5 |
 | audio | web audio api (procedural, no asset files) |
 | speech | web speech api (`speechsynthesis` + `speechrecognition`) |
-| push | web-push (VAPID) + service worker |
-| astronomy | satellite.js (ISS TLE propagation) |
+| push | web-push (vapid) + service worker |
+| astronomy | satellite.js (iss tle propagation) |
 | storage | flat json file at `data/cernos.json` |
-| typography | JetBrainsMono Nerd Font |
+| typography | jetbrainsmono nerd font |
 
 ## data sources
 
 - **[open-meteo](https://open-meteo.com/)** — forecast, air quality, geocoding, pollen, historical climate, ERA5 archive. free, no key.
 - **[rainviewer](https://www.rainviewer.com/)** — precipitation radar tiles. free, no key.
 - **[blitzortung](https://www.blitzortung.org/)** — public websocket of live lightning strikes. free, no key.
-- **[NOAA SWPC](https://www.swpc.noaa.gov/)** — planetary k-index (geomagnetic / aurora forecast). free, no key.
-- **[celestrak](https://celestrak.org/)** — ISS TLE elements, propagated locally with satellite.js. free, no key.
+- **[noaa swpc](https://www.swpc.noaa.gov/)** — planetary k-index (geomagnetic / aurora forecast). free, no key.
+- **[celestrak](https://celestrak.org/)** — iss tle elements, propagated locally with satellite.js. free, no key.
 - **[anthropic api](https://console.anthropic.com/)** — claude haiku 4.5 for the ai brief, trip brief, voice ask, and activity matchmaker. optional; the app falls back to heuristics without a key.
 
 ## getting started
@@ -143,7 +143,7 @@ then open <http://localhost:3000>.
 
 that's it — no key, no signup. all weather, radar, geocoding, pollen, lightning, kp-index, and ISS data flow from public free sources.
 
-default location is São Paulo. search any city or tap **use my location**.
+default location is são paulo. search any city or tap **use my location**.
 
 ### optional: enable claude
 
@@ -158,7 +158,7 @@ get a key at <https://console.anthropic.com/>. without one, every other feature 
 
 ### optional: enable rain alarm push
 
-to enable push notifications for the rain alarm, generate a VAPID key pair and add to `.env.local`:
+to enable push notifications for the rain alarm, generate a vapid key pair and add to `.env.local`:
 
 ```
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=<public>
@@ -170,7 +170,7 @@ generate a pair with `npx web-push generate-vapid-keys`.
 
 ## build & run
 
-PowerShell (Windows):
+powershell (windows):
 ```powershell
 npm run build; if ($?) { npm start }
 ```
@@ -191,17 +191,17 @@ src/
       geocode/                 open-meteo geocoding proxy
       favorites/               crud over the json store
       history/                 recent locations
-      iss-pass/                celestrak TLE → satellite.js pass times
-      space-weather/           NOAA kp-index + aurora plausibility
+      iss-pass/                celestrak tle → satellite.js pass times
+      space-weather/           noaa kp-index + aurora plausibility
       pressure-history/        24h barometric history
-      climate-lens/            today vs 1990s ERA5 delta
+      climate-lens/            today vs 1990s era5 delta
       sky-journal/             daily "what it felt like" entry store
       trip-brief/              packing-list weather summary for a trip
       activity-suggestions/    claude activity matchmaker
       voice-ask/               free-form weather q&a
       poster/                  shareable sky poster (image generation)
       rain-alarm/
-        vapid-key/             public VAPID key endpoint
+        vapid-key/             public vapid key endpoint
         subscribe/             web-push subscription store
         check/                 cron-friendly endpoint that fires push if rain ≤20min
     ambient/[city]/            dedicated ambient-mode route per city
@@ -242,15 +242,15 @@ src/
     db.ts                      json-file store for favorites + history
     types.ts                   shared typescript types
 public/
-  sw.js                        service worker (PWA + push)
-  manifest.webmanifest         PWA manifest
+  sw.js                        service worker (pwa + push)
+  manifest.webmanifest         pwa manifest
 data/
   cernos.json                  created on first favorite/visit
 ```
 
 ## acknowledgements
 
-open-meteo, rainviewer, blitzortung, NOAA SWPC, and celestrak for offering high-quality public data for free. anthropic for claude. every contributor to next.js, react, tailwind, framer motion, gsap, hammer.js, leaflet, satellite.js, web-push, and lucide.
+open-meteo, rainviewer, blitzortung, noaa swpc, and celestrak for offering high-quality public data for free. anthropic for claude. every contributor to next.js, react, tailwind, framer motion, gsap, hammer.js, leaflet, satellite.js, web-push, and lucide.
 
 ---
 
