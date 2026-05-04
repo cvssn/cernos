@@ -2,6 +2,7 @@
 
 import { Fragment } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGsapNumber } from "@/lib/useGsap";
 import {
   Heart,
   HeartOff,
@@ -31,6 +32,8 @@ export default function CurrentWeather({
 }: Props) {
   const cond = describeWeather(snapshot.weatherCode);
   const place = weather.place;
+  const tempRef = useGsapNumber<HTMLSpanElement>(snapshot.temperature);
+  const feelsRef = useGsapNumber<HTMLSpanElement>(snapshot.apparentTemperature);
   const dKey = snapshot.time.slice(0, 10);
   const day = weather.daily.find((d) => d.date === dKey) ?? weather.daily[0];
 
@@ -119,20 +122,17 @@ export default function CurrentWeather({
           </AnimatePresence>
           <div className="leading-none">
             <div className="flex items-start gap-1">
-              <motion.span
-                key={Math.round(snapshot.temperature)}
-                initial={{ y: 8, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.25 }}
-                className="text-7xl md:text-8xl font-extralight tracking-tight text-main"
+              <span
+                ref={tempRef}
+                className="text-7xl md:text-8xl font-extralight tracking-tight text-main tabular-nums"
               >
                 {Math.round(snapshot.temperature)}
-              </motion.span>
+              </span>
               <span className="text-3xl text-sub mt-3">°C</span>
             </div>
             <div className="text-main text-lg md:text-xl mt-2">{cond.label}</div>
             <div className="text-sub text-sm mt-1">
-              Feels like {Math.round(snapshot.apparentTemperature)}°
+              Feels like <span ref={feelsRef} className="tabular-nums">{Math.round(snapshot.apparentTemperature)}</span>°
             </div>
           </div>
         </div>

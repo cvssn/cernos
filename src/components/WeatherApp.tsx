@@ -43,6 +43,7 @@ import { buildHeuristicNarrative } from "@/lib/insights";
 import { getBrowserLocale } from "@/lib/locale";
 import { useDynamicFavicon } from "@/lib/useDynamicFavicon";
 import { useHammer } from "@/lib/useHammer";
+import { useGsapEntrance } from "@/lib/useGsap";
 import type {
   FavoriteRow,
   HistoryRow,
@@ -51,6 +52,23 @@ import type {
   ThemeName,
   WeatherPayload,
 } from "@/lib/types";
+
+function StaggerSection({
+  className,
+  children,
+  stagger = 0.06,
+}: {
+  className?: string;
+  children: React.ReactNode;
+  stagger?: number;
+}) {
+  const ref = useGsapEntrance<HTMLDivElement>({ stagger });
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+}
 
 const DEFAULT_PLACE: Place = {
   id: 3448439,
@@ -562,7 +580,10 @@ export default function WeatherApp() {
                   onChange={setScrubIndex}
                   onScrubStateChange={setScrubbing}
                 />
-                <div className="columns-1 lg:columns-2 gap-4 lg:gap-6 [&>*]:break-inside-avoid [&>*]:mb-4 lg:[&>*]:mb-6">
+                <StaggerSection
+                  stagger={0.07}
+                  className="columns-1 lg:columns-2 gap-4 lg:gap-6 [&>*]:break-inside-avoid [&>*]:mb-4 lg:[&>*]:mb-6"
+                >
                   <HourlyForecast
                     hourly={weather.hourly}
                     nowIndex={weather.nowIndex}
@@ -601,7 +622,7 @@ export default function WeatherApp() {
                     entries={journalEntries}
                     todayDate={journalToday}
                   />
-                </div>
+                </StaggerSection>
               </motion.div>
             ) : null}
           </AnimatePresence>
